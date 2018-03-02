@@ -70,7 +70,7 @@
 
                                 
                                 <label class="aui-input-addon" style="padding-top:0;display: block;width:98%;">
-                                    <input type="checkbox" class="aui-input dl" id="{{=it[i].ctlname}}_{{= j}}"  value="{{=it[i]['options']['data'][j].text}}"  name="{{=it[i].ctlname}}" data-check="{{=it[i]['options']['data'][j].text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
+                                    <input type="checkbox" class="aui-input dl" id="{{=it[i].ctlname}}_{{= j}}"  value="{{=it[i]['options']['data'][j].text}}"  name="{{=it[i].ctlname}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" data-check="{{=it[i]['options']['data'][j].text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
                                     {{? it[i]['options']['data'][j].text =="其他_"}}
                                     <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_other_text" class="select1 dl" name="{{=it[i].ctlname}}_other_text" placeholder="" value="{{=it[i].valueEx}}" style="float:none;display: inline-block;width:70%;" />
                                     {{?}}
@@ -151,34 +151,53 @@
                 //如果某个控件 存在showRelation的设置,则如下代码
                 if(showRelation.length > 0) {
                     for(var b=0;b<showRelation.length;b++) {
-                        var sitem = showRelation[b]
-                     //   console.log(showRelation[b]);
-                        if(sitem.show =='true') {
-                            var NeedFindItem = findItem(sitem.ctlname);
+                        var sitem = showRelation[b];
+
+                        var NeedFindItem = findItem(sitem.ctlname);
                             if(NeedFindItem.ctlname == sitem.ctlname) {
                                 var vDefalut = NeedFindItem.options.valueDefault;
                                 for(var m=0;m<vDefalut.length;m++){ //遍历默认值
                                     var vditem = vDefalut[m];
                                     if(vditem == sitem.value) { //如果某控件的默认值正好等于viewRelation的value,那么直接将关联的控件显示
                                         $('input[name='+ item.ctlname+']').parent().parent().show();
+
                                     }
                                 }
                                 var ctlname_ = item.ctlname
+                                var $clname = $('input[name='+ ctlname_+']');
                                 var concatInputAttr = NeedFindItem.ctlname+'_'+sitem.value;
-                              
-                                $('input[name='+sitem.ctlname+']').click(function(){
-                                    if(concatInputAttr == $(this).attr('data-relation') ){
-                                        $('input[name='+ ctlname_+']').parent().parent().show();
-                                    }
-                                    else {
-                                        $('input[name='+ ctlname_+']').parent().parent().hide();
-                                    }
-                                        
-                                })
+                                console.log(NeedFindItem.type)
+                                if(NeedFindItem.type =='radio') {
+                                    $('input[name='+sitem.ctlname+']').click(function(){
+                                        if(concatInputAttr == $(this).attr('data-relation') ){
+                                            $('input[name='+ ctlname_+']').parent().parent().show();
+                                        }
+                                        else {
+                                            $('input[name='+ ctlname_+']').parent().parent().hide();
+                                        }
+                                            
+                                    })
+                                }
+                                else {
+                                    $('input[name='+sitem.ctlname+']').each(function(){
+
+                                        $(this).change(function(){
+                                           // console.log(123)
+                                            var changeCheckboxStatus = $(this).prop("checked");
+                                           console.log(changeCheckboxStatus);
+                                            if(concatInputAttr == $(this).attr('data-relation') ){
+                                                
+                                                
+                                            }
+                                            else {
+                                                   
+                                            }
+                                        })
+                                    })
+                                }
+                                
                                 
                             }
-                            
-                        }
                     }
                 }
                 
