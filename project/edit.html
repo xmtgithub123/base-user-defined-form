@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link href="Content/mobileUI/winu-ui.css" rel="stylesheet" />
+    <link href="Content/alert.mob.css" rel="stylesheet" />
+    <link href="Content/xAui/css/aui-self.css" rel="stylesheet" />
+    <link href="Content/xAui/css/aui.css" rel="stylesheet" />
+    <link href="Content/mobileUI/aui/aui.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .p-0 {
+            padding:0;
+        }
+        .p-5 {
+            padding:5px;
+        }
+        .mt-15 {
+            margin-top:15px;
+        }
+        input[type="button"] {
+            font-size:14px;
+        }
+        .dl {display: inline-block;}
+        .aui-input-sm {
+            padding:5px 15px !important;
+            border:1px solid #ddd !important;
+        }
+        select {
+            display: inline-block;
+            margin-bottom: 0;
+            padding: 5px 15px;
+            width: 98%;
+            font-size:12px;
+        }
+    </style>
+</head>
+<body>
+
+   <div class="aui-content">
+        <div class="aui-row mt-15">
+            <input type="button" id="textBtn" namne="textBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:50px;display: inline-block;" value="新增" onclick="NewAdd();"/>
+           <!--  <input type="button" id="checkboxBtn" namne="checkboxBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:50px;display: inline-block;" value="编辑"/> -->
+            <input type="button" id="radioBtn" namne="radioBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:50px;display: inline-block;" value="删除"/>
+            
+            <a class="aui-btn aui-btn-block aui-btn-success p-0" id="refresh" href="javascript:void(0)" onclick="location.reload()" style="width:50px;display: inline-block;font-size: 14px;">刷新 </a>
+            <a class="aui-btn aui-btn-block aui-btn-success p-0" href="javascript:void(0)" style="width:50px;display: inline-block;font-size: 14px;" onclick="toPreview()" >预览</a>
+        </div>
+       
+        <div class="aui-row mt-15">
+           <select id="selectName" name="TimeSpanPm" style="width:60%;font-size:12px;" value="" >
+               <option value="" disabled="" selected>请选择</option>
+            </select>
+           <input type="button" id="edit" namne="" class="aui-btn aui-btn-block aui-btn-success p-5" style="width:60px;display: inline-block;" onclick="toEdit()" value="编辑"/>
+        </div>
+        <div class="aui-card mt-15" >  
+            <form id="formInfo" class="aui-form" >     
+                <div class="aui-form">
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">name</span>
+                        <input type="text" class="aui-input" id="name" class="name" placeholder="请输入控件名称" value="" />
+                    </div>
+
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">engname</span>
+                        <input type="text" class="aui-input" id="engname" class="engname" placeholder="请输入控件英文名称" value=""/>
+                    </div>
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">type</span>
+                        <select id="type" name="type" value="" >
+                           <option value="text">text</option>
+                           <option value="checkbox">checkbox</option>
+                           <option value="radio">radio</option>
+                        </select>
+                        <!-- <input type="text" class="aui-input" id="type" class="type" placeholder="请输入控件类型" value=""/> -->
+                    </div>
+                    <div class="aui-btn-row">
+                        <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveNewAddData()">保存</div>
+                    </div>
+                </div>
+            </form>
+
+            <form class="aui-form" id="auiFormTypeTemp">
+                <div id="formBox"></div> 
+            </form>
+            
+            <!-- 文本模板 -->
+            <script id="template_text" type="text/x-dot-template">
+                <div class="aui-form">
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">{{=it.name}}</span>
+                        <input type="text" class="aui-input" id="title" name="title" placeholder="{{=it.options.prompt}}" value="{{=it.options.title ==''?'':it.options.title}}" />
+                    </div>  
+                    <!-- 是否显示关系视图(隐藏[隐藏时不显示但也可以配置]或显示) -->
+                    <div class="aui-input-row" >
+                        <span class="aui-input-addon">
+                        {{? it.options.hidden =='true' }}
+                        <input type="checkbox" class="aui-input" id="hidden" name="hidden"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>是否显示设置
+                        {{??}} 
+                        <input type="checkbox" class="aui-input" style="width:auto;margin-right:10px;" id="hidden" name="hidden" value="true" />是否显示设置   
+                        {{?}}
+                        </span>
+                    </div>  
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">显示类型</span>
+                        <select id="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
+                            <option value="" disabled="" selected>请选择</option>
+                            <option value="radio">单选框</option>
+                            <option value="checkbox">复选框</option>
+                        </select>
+                        
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">具体ctlname</span>
+                        <select id="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;">
+                            <!-- 显示showRelation[0]-->
+                            <option value="" disabled="" selected>请选择</option>
+                        </select>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">Data</span>
+                        <select id="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;">
+                            <!-- 显示showRelation[0]-->
+                            <option value="" disabled="" selected>请选择</option>
+                        </select>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">是否显示</span>
+                        <select id="show" name="show"  value="" style="display:inline-block;">
+                            <option value="" disabled="" selected>请选择</option>
+                            <option value="true">显示</option>
+                            <option value="false">隐藏</option>
+                        </select>
+                    </div>
+                   
+                    
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">
+                        {{? it.options.required =='true'}}
+                        <input type="checkbox" class="aui-input" id="required" name="required"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>这是必填项
+                        {{??}} 
+                        <input type="checkbox" class="aui-input" style="width:auto;margin-right:10px;" id="required" name="required" value="true" />这是必填项   
+                        {{?}}
+                        
+                        </span>
+                    </div>  
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">测试value</span>
+                        <input type="text" class="aui-input" id="value" name="value" value="" />
+                    </div>
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">测试valueEx</span>
+                        <input type="text" class="aui-input" id="valueEx" name="valueEx" value="" />
+                    </div>
+                    <div class="aui-btn-row">
+                        <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveNewSetData('{{=it.ctlname}}')">保存</div>
+                    </div>
+                </div>
+            </script>
+
+
+
+            <!-- 多选框模板 -->
+            <script id="template_checkbox" type="text/x-dot-template">
+                <div class="aui-form">
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">{{=it.name}}</span>
+                        <input type="text" class="aui-input" id="title" name="title" value="{{=it.options.title ==''?'':it.options.title}}" placeholder="{{=it.options.prompt}}" />
+                    </div>  
+
+                    <!-- 是否显示关系视图(隐藏[隐藏时不显示但也可以配置]或显示) -->
+                    <div class="aui-input-row" >
+                        <span class="aui-input-addon">
+                        {{? it.options.hidden =='true' }}
+                        <input type="checkbox" class="aui-input" id="hidden" name="hidden"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>是否显示设置
+                        {{??}} 
+                        <input type="checkbox" class="aui-input" style="width:auto;margin-right:10px;" id="hidden" name="hidden" value="true" />是否显示设置   
+                        {{?}}
+                        </span>
+                    </div>  
+                    <!-- 选择框显示 -->
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">选择类型</span>
+                        <select id="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
+                            <option value="" disabled="" selected>请选择</option>
+                            <option value="radio">单选框</option>
+                            <option value="checkbox">复选框</option>
+                        </select>
+                        
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">具体ctlname</span>
+                        <select id="TempSelectCtlName" name="TempSelectContentCtlName"  value="" style="display:inline-block;">
+                            <!-- 显示showRelation[0]-->
+                            <option value="" disabled="" selected>请选择</option>
+                        </select>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">Data</span>
+                        <select id="TempSelectData" name="TempSelectData"   value="" style="display:inline-block;">
+                            <!-- 显示showRelation[0]-->
+                            <option value="" disabled="" selected>请选择</option>
+                        </select>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">是否显示</span>
+                        <select id="show" name="show"  value="" style="display:inline-block;">
+                            <option value="" disabled="" selected>请选择</option>
+                            <option value="true">显示</option>
+                            <option value="false">隐藏</option>
+                        </select>
+                    </div>
+
+
+
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">
+                        {{? it.options.required =='true'}}
+                        <input type="checkbox" class="aui-input" id="required" name="required"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>这是必填项
+                        {{??}} 
+                        <input type="checkbox" class="aui-input" style="width:auto;margin-right:10px;" id="required" name="required" value="true" />这是必填项   
+                        {{?}}
+                        
+                        </span>
+                    </div>  
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">选项设置</span>
+                        {{~it.options.data:value:index}}
+                            <div style="display:block;" id="selectOptions_{{=index}}" data-index="{{=index}}" class="select-options">
+                                <label class="aui-input-addon" style="padding-top:0">
+                                    <input type="hidden" id="data" name='data'>
+
+                                    <input type="checkbox" class="aui-input dl" id="valueDefaultChecked" name="valueDefaultChecked" data-check="{{=value.text}}" value="{{=value.text}}"  style="width:auto;margin-right:5px;float:none;display: inline-block;" />
+                                    <input type="text" class="aui-input aui-input-sm" id="" class="select1 dl" placeholder="{{=value.text}}" value="{{=value.text}}" style="float:none;display: inline-block;width:70%" />
+                                    <input type="button" id="addBtn" namne="addBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline" value="+"  onclick="addSelectItem('{{=index}}','checkbox')"/>
+                                    <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeSelectItem('{{=index}}')"/>
+                                </label>
+                            </div>
+                         
+                        
+                        {{~}}
+                    </div>
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">value</span>
+                        <input type="text" class="aui-input" id="value" name="value" class="" value="{{=it.value ==''?'': it.value}}" />
+                    </div>
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">valueEx</span>
+                        <input type="text" class="aui-input" id="valueEx" class="valueEx" value="{{=it.valueEx ==''?'': it.valueEx}}" />
+                    </div>
+                    <div class="aui-btn-row">
+                        <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveNewSetData('{{=it.ctlname}}')">保存</div>
+                    </div>
+                </div>
+            </script>
+
+
+            <!-- 单选框模板 -->
+            <script id="template_radio" type="text/x-dot-template">
+                <div class="aui-form">
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">{{=it.name}}</span>
+                        <input type="text" class="aui-input" id="title" name="title" value="{{=it.options.title ==''?'':it.options.title}}" placeholder="{{=it.options.prompt}}" />                  
+                    </div>  
+
+                     <!-- 是否显示关系视图(隐藏[隐藏时不显示但也可以配置]或显示) -->
+                    <div class="aui-input-row" >
+                        <span class="aui-input-addon">
+                        {{? it.options.hidden =='false' }}
+                        <input type="checkbox" class="aui-input" id="hidden" name="hidden"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>是否显示设置
+                        {{??}} 
+                        <input type="checkbox" class="aui-input" style="width:auto;margin-right:10px;" id="hidden" name="hidden" value="true" />是否显示设置   
+                        {{?}}
+                        </span>
+                    </div>  
+                    <!-- 选择框显示 -->
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">显示类型</span>
+                        <select id="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
+                            <option value="" disabled="" selected>请选择</option>
+                            <option value="radio">单选框</option>
+                            <option value="checkbox">复选框</option>
+                        </select>
+                        
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">具体ctlname</span>
+                        <select id="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;">
+                            <!-- 显示showRelation[0]-->
+                            <option value="" disabled="" selected>请选择</option>
+                        </select>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">Data</span>
+
+                        <select id="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;">
+                            <!-- 显示showRelation[0]-->
+                            <option value="" disabled="" selected>请选择</option>
+                        </select>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">是否显示</span>
+                        <select id="show" name="show"  value="" style="display:inline-block;">
+                            <option value="" disabled="" selected>请选择</option>
+                            <option value="true">显示</option>
+                            <option value="false">隐藏</option>
+                        </select>
+                    </div>
+
+
+
+
+
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">
+                         {{? it.options.required =='true'}}
+                        <input type="checkbox" class="aui-input" id="required" name="required"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>这是必填项
+                        {{??}} 
+                        <input type="checkbox" class="aui-input" style="width:auto;margin-right:10px;" id="required" name="required" value="true" />这是必填项   
+                        {{?}}
+                        </span>
+                    </div>  
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">选项设置</span>
+                        {{~it.options.data:value:index}}
+                        <div style="display:block;" id="selectOptions_{{=index}}" data-index="{{=index}}" class="select-options">
+                            <label class="aui-input-addon" style="padding-top:0">
+                            <input type="radio" class="aui-input" class="name dl" id="valueDefaultChecked" name="valueDefaultChecked" value="{{=value.text}}"  data-radio="{{=value.text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" />
+                            <input type="text" class="aui-input aui-input-sm" id="" class="select1 dl" placeholder="" value="{{=value.text}}" style="float:none;display: inline-block;width:70%;" />
+                            <input type="button" id="addBtn" namne="addBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline" value="+"  onclick="addSelectItem('{{=index}}')"/>
+                            <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeSelectItem('{{=index}}','radio')"/>
+                            </label>
+                        </div>
+                        
+                        
+                        {{~}}
+                    </div>
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">value</span>
+                        <input type="text" class="aui-input" id="value" class="" name="value" value="{{=it.value ==''?'': it.value}}" />
+                    </div>
+                    <div class="aui-input-row">
+                        <span class="aui-input-addon">valueEx</span>
+                        <input type="text" class="aui-input" id="valueEx" name="valueEx" class="" value="{{=it.valueEx ==''?'': it.valueEx}}" />
+                    </div>
+                     <div class="aui-btn-row">
+                        <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveNewSetData('{{=it.ctlname}}')">保存</div>
+                    </div>
+                </div>
+
+            </script>
+
+        </div>
+        
+    </div>
+
+
+
+
+
+
+
+
+    <script src="Scripts/jquery.min.js" type="text/javascript"></script>
+    <script src="Scripts/prototypeEx.js"></script>
+    <script src="Content/xAui/script/api.js"></script>
+    <script src="Scripts/doT.min.js"></script>
+    <script src="Scripts/alert.mob.js"></script>
+    <script type="text/javascript">
+        
+        var itemArr = []; //定义空数组 用来存放新增的数据;
+        var options_text = {
+            title:'标题',
+            prompt: '文本框', // 文本框内提示文本，文本框特有
+            required: 'required',
+            valueDefault: '',
+            hidden: true, // false 不显示，等于 false 时 不再考虑 showRelation
+            viewRelation: null // 显示条件 为 null 总是显示
+        };
+        var options_checkbox = {
+            title:'复选框标题',
+            url: 'aaa.json', // 有 url 的话就通过 ajax 同步 get 回数据到 data 属性，忽略下面配的 data 属性
+            data: [
+                { text: '选项1', value: ''},
+                { text: '选项2', value: ''},
+                { text: '其他', value: ''},
+                { text: '其他_', value: ''}, // 其他后面含文本框
+            ],
+            required: 'required',
+            prompt: '复选框',
+            valueDefault: ['选项1','选项2'],
+            hidden: false, // false 不显示，等于 false 时 不再考虑 showRelation
+            showRelation: [// 显示条件
+                {
+                    ctlname:'sex1',
+                    value:'男',
+                    show: true
+                }
+            ]
+        };
+        var options_radio = {
+            title:'单选框标题',
+            url: '',// 有 url 的话就通过 ajax 同步 get 回数据到 data 属性，忽略下面配的 data 属性
+            data: [
+                { text: '男', value: ''},
+                { text: '女', value: ''},
+                { text: '其他', value: ''},
+                { text: '其他_', value: ''}, // 其他后面含文本框
+            ],
+            prompt: '单选框',
+            required: 'required',
+            valueDefault: '男',
+            hidden: false, // false 不显示，等于 false 时 不再考虑 showRelation
+            viewRelation: null
+        };
+
+        //首先获取本地存储的itemArr数组数据
+        var GetlocalStorageItemArr =JSON.parse(localStorage.getItem("itemArr") || "[]");
+
+        //页面加载后的 获取本地数据，并回填到头部选择框
+        window.onload = function() {
+            var $selectName = $('#selectName')
+            for(var i = 0;i<GetlocalStorageItemArr.length;i++) {
+                var options = $('<option value = '+ GetlocalStorageItemArr[i].ctlname +'>'+ GetlocalStorageItemArr[i].name + '+'+GetlocalStorageItemArr[i].ctlname+ '</option>');
+                    $selectName.append(options);
+            }
+           
+        }
+        //头部“编辑”按钮
+        function toEdit() {
+            if($('#selectName').val()) {
+                var NeedEditItem = findItem($('#selectName').val());
+                console.log(NeedEditItem)
+                showEdit(NeedEditItem);  
+            }
+            else {
+                $.alert('请先选择要编辑的控件!')
+            }
+            
+        }
+
+        //保存 自定义 控件名称 和 类型
+        function saveNewAddData() {
+            var formData = DomUtil.serialize(document.getElementById('formInfo'));
+            //console.log(formData);
+            if($('#name').val() =='' || $('#engname').val() =='') {
+                $.alert('请将内容填写完整')
+            }
+            else {
+                var item = {
+                    name:formData.name,
+                    engname:formData.engname,
+                    ctlname:formData.engname + (GetlocalStorageItemArr.length + 1).toString() ,
+                    type:formData.type,
+                    template:'#template_'+formData.type,
+                    options:'',
+                    value:'',
+                    valueEx:'',
+                };
+                item.options = window['options_' +　item.type];
+
+               
+                GetlocalStorageItemArr.push(item);
+                itemArr = GetlocalStorageItemArr;
+                localStorage.setItem('itemArr',JSON.stringify(GetlocalStorageItemArr));
+                //console.log(item.ctlname)
+                var NeedEditItem = findItem(item.ctlname);
+               // console.log(GetlocalStorageItemArr)
+                showEdit(NeedEditItem);      
+                }
+                      
+            }
+
+       
+        //显示对应的自定义控件
+        function showEdit(NeedEditItem) {
+            $('#formInfo').hide();
+            console.log(NeedEditItem)
+            var dataInter = NeedEditItem;
+            var itemType = NeedEditItem.type;
+            // var itemLocalStorageArr = JSON.parse(localStorage.getItem('itemArr'));
+            //console.log(itemLocalStorageArr)
+
+            switch(itemType) {
+                case 'text': 
+                            var interText = doT.template($('#template_text').text());
+                            $('#formBox').html(interText(dataInter));
+
+                            setFormTypeSelectParam('TempSelect','TempSelectCtlName','text');
+                            break;
+
+                case 'checkbox':
+                            var interText = doT.template($('#template_checkbox').text());
+                            $('#formBox').html(interText(dataInter));
+                            setOptionChecked();
+                            setFormTypeSelectParam('TempSelect','TempSelectCtlName','checkbox');                           
+
+                            break;
+                case 'radio': 
+                            var interText = doT.template($('#template_radio').text());
+                            $('#formBox').html(interText(dataInter));
+                            setOptionChecked();
+                            setFormTypeSelectParam('TempSelect','TempSelectCtlName','radio');
+                            break;
+            }
+        }
+
+        //遍历本地数据，根据ctlname查找对应的item数据，并返回对应的item对像
+        function findItem(CName) {
+            for(var i=0;i<GetlocalStorageItemArr.length;i++) {
+                var itemOne = GetlocalStorageItemArr[i];
+                if(itemOne.ctlname == CName) {
+                    return itemOne;
+                }
+            }
+        }
+
+        
+
+        //表单控件自定义保存数据方法
+        function saveNewSetData (ctlname) {
+           // console.log(ctlname)
+            var NeedFindItem = findItem(ctlname);
+           // console.log(NeedFindItem)
+
+            var dataArr = [], checkedArr = [];
+            $('.select-options').each(function(index,value){
+
+                var v = $(this).find('input[type="text"]').val();
+                console.log(v)
+                $(this).find('input[type="text"]').attr('value',v);
+                $(this).find('input[type="text"]').parent().find('input[type="checkbox"]').attr('value',v).attr('data-check',v);
+
+
+                dataArr.push({'text': v,'value':''});
+            })
+
+
+            var formTypeSetData = DomUtil.serialize(document.getElementById('auiFormTypeTemp'));
+            console.log(formTypeSetData)
+                formTypeSetData.data = dataArr;
+                if(formTypeSetData.valueDefaultChecked){
+                    formTypeSetData.valueDefaultChecked = formTypeSetData.valueDefaultChecked.split(",");
+
+                }
+            var viewRelation = [];
+            if(formTypeSetData.hidden) {
+                viewRelation = null;
+            }
+            else {
+                var relationName = formTypeSetData.TextTempSelectCtlName
+                 viewRelation.push({'ctlname':formTypeSetData.TempSelectCtlName,'value':formTypeSetData.TempSelectData,'show':formTypeSetData.show})
+            }
+
+            var options = {
+                data:dataArr || [],
+                title:formTypeSetData.title,
+                prompt:NeedFindItem.options.prompt,
+                required:formTypeSetData.required=="" ? 'false':formTypeSetData.required,
+                valueDefault:formTypeSetData.valueDefaultChecked,
+                hidden:formTypeSetData.hidden =="" ? 'false':formTypeSetData.hidden,
+                viewRelation:viewRelation,
+            }
+          //  console.log(NeedFindItem)
+            var item = {
+                name:NeedFindItem.name,
+                engname:NeedFindItem.engname,
+                ctlname:NeedFindItem.ctlname,
+                type:NeedFindItem.type,
+                template:NeedFindItem.template,
+                options:options,
+                value:formTypeSetData.value,
+                valueEx:formTypeSetData.valueEx,
+
+            };
+            console.log(item)
+            var itemAnotherArr = [];
+            for(var i=0;i<GetlocalStorageItemArr.length;i++) {
+                var arr = GetlocalStorageItemArr[i];
+                if(arr.ctlname == ctlname){
+                    itemAnotherArr.push(item);
+                }
+                else {
+                      itemAnotherArr.push(arr);
+                }
+            }
+           localStorage.removeItem("itemArr");
+           localStorage.setItem('itemArr',JSON.stringify(itemAnotherArr));
+
+        }
+        //预览
+        function toPreview() {
+            if($('#selectName').val()) {
+                console.log(123)
+                window.location.href ='view.html';
+            }
+            else {
+               $.alert('请先选择要预览的控件!')
+            }
+            
+        }
+
+
+        //增加选项设置
+        function addSelectItem(i,type) {
+            console.log(i)
+            var len = $('.select-options').parent().children().length -1;
+            var addLen = len++;
+            var insertData = '';
+            if(type=='checkbox'){
+                console.log('checkbox')
+                insertData = insertData + "<div id=\"selectOptions_"+ addLen +"\"  data-index=\""+ addLen +"\" class=\"select-options\" style=\"display:block;\">";
+                insertData = insertData + "     <label class=\"aui-input-addon\" style=\"padding-top:0\">";
+                insertData = insertData + "           <input type=\"checkbox\" class=\"aui-input dl\" id=\"valueDefaultChecked\" name=\"valueDefaultChecked\" value=\"\"  style=\"width:auto;margin-right:5px;float:none;display: inline-block;\" />";
+                insertData = insertData + "           <input type=\"text\" class=\"aui-input aui-input-sm\" id=\"\" class=\"select1 dl\"  value=\"\" style=\"float:none;display: inline-block;width:70%\" />";
+                insertData = insertData + "           <input type=\"button\" id=\"addBtn\" namne=\"addBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline\" value=\"+\"  onclick=\"addSelectItem('"+addLen+"',\'checkbox\')\"/>";
+                insertData = insertData + "           <input type=\"button\" id=\"removeBtn\" namne=\"removeBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline;\" value=\"-\" onclick=\"removeSelectItem("+addLen+")\"/>";
+            }
+            else {
+                console.log('radio')
+                insertData = insertData + "<div id=\"selectOptions_"+ addLen +"\"  data-index=\""+ addLen +"\"  class=\"select-options\" style=\"display:block;\">";
+                insertData = insertData + "     <label class=\"aui-input-addon\" style=\"padding-top:0\">";
+                insertData = insertData + "           <input type=\"radio\" class=\"aui-input dl\" id=\"valueDefaultChecked\" name=\"valueDefaultChecked\" value=\"\"  style=\"width:auto;margin-right:5px;float:none;display: inline-block;\" />";
+                insertData = insertData + "           <input type=\"text\" class=\"aui-input aui-input-sm\" id=\"\" class=\"select1 dl\"  value=\"\" style=\"float:none;display: inline-block;width:70%\" />";
+                insertData = insertData + "           <input type=\"button\" id=\"addBtn\" namne=\"addBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline\" value=\"+\"  onclick=\"addSelectItem('"+addLen+"',\'radio\')\"/>";
+                insertData = insertData + "           <input type=\"button\" id=\"removeBtn\" namne=\"removeBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline;\" value=\"-\" onclick=\"removeSelectItem("+addLen+")\"/>";
+            }
+                                    
+
+
+            $('#selectOptions_'+i).after(insertData);
+        }
+
+        //删除指定某一条选项设置
+        function removeSelectItem(i) {
+            $('#selectOptions_'+i).remove();
+        }
+
+        //编辑某项控件时，跟据存在本地的数据来判断是否是选中的
+        function setOptionChecked () {
+            for(var i =0;i<GetlocalStorageItemArr.length;i++) {
+                var item = GetlocalStorageItemArr[i];
+                var valueDefault = item.options.valueDefault;
+                var data = item.options.data || '';
+                var showRelation = item.options.showRelation || {};
+                for(var j =0;j<data.length;j++) {
+                    var dataitem = data[j];
+                    for(var k=0;k<valueDefault.length;k++) {
+                        var vditem = valueDefault[k];
+                        if(dataitem.text == vditem) {
+                           if(item.type =='radio'){
+                                $('input[data-radio='+dataitem.text+']').attr('checked','checked');
+                           }
+                           else {
+                                $('input[data-check='+dataitem.text+']').attr('checked','checked');
+                           }
+                        }
+                    }
+                }
+            }
+        }
+        //设置选择select控件时的数据动联及各项参数
+        function setFormTypeSelectParam(id,cid,type){
+            var itemLocalStorageArr = JSON.parse(localStorage.getItem('itemArr'));
+            if(type == 'text'){
+                $('#TempSelect').change(function() {
+                //如果选择单选框，则遍历全局数据的type为radio的ctlname
+                var selectCurrentType = $(this).val();
+                var selectArr=[];
+                var $TempSelectCtlName = $('#'+ cid);
+                $('#TempSelectCtlName').find("option:not(:first)").remove();
+                //$('#TextTempSelectCtlName option:not(:first)').remove();
+                
+                for(var i =0;i<itemLocalStorageArr.length;i++) {
+                    var item = itemLocalStorageArr[i];
+                    if(item.type == selectCurrentType){
+                        var options = $('<option value = '+ item.ctlname + '>'+ item.ctlname+ '</option>');
+                        selectArr.push(item.ctlname);
+                        if(selectArr.indexOf(item.ctlname) != -1){
+                            $TempSelectCtlName.append(options);
+                        }                                       
+                    }
+                    var getCtlNameValue = $TempSelectCtlName.val(); //获取当前选择的ctlname
+                    var SelectedCtlNameValue = getCtlNameValue || ''; 
+
+                    var selectChildArr=[]; 
+                    var $TempSelectData = $('#TempSelectData');
+                    if(!SelectedCtlNameValue){
+                        $('#TempSelectCtlName').change(function() {
+                            var selectChildArr=[];
+                            $('#TempSelectData').find("option:not(:first)").remove();
+                            // $('#TextTempSelectData option:not(:first)').remove();
+                            for(var j =0;j<itemLocalStorageArr.length;j++) {
+                                var item = itemLocalStorageArr[j];
+                                if(item.ctlname == $(this).val()) {
+                                    var itemData = item.options.data;
+                                    for(var k=0;k<itemData.length;k++) {
+                                        var itemOptions = $('<option value = '+ itemData[k].text +'>'+ itemData[k].text+ '</option>');
+                                        selectChildArr.push(itemData[k].text);
+                                        if(selectChildArr.indexOf(itemData[k].text) != -1){
+                                           $TempSelectData.append(itemOptions)
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        })
+                    }
+                    else {
+                        $('#TempSelectData').find("option:not(:first)").remove();
+                        //$('#TextTempSelectData option:not(:first)').remove();
+                            for(var j =0;j<itemLocalStorageArr.length;j++) {
+                                var item = itemLocalStorageArr[j];
+                                if(item.ctlname == SelectedCtlNameValue) {
+                                    var itemData = item.options.data;
+                                    for(var k=0;k<itemData.length;k++) {
+                                        var itemOptions = $('<option value = '+ itemData[k].text +'>'+ itemData[k].text+ '</option>');
+                                        selectChildArr.push(itemData[k].text);
+                                        if(selectChildArr.indexOf(itemData[k].text) != -1){
+                                           $TempSelectData.append(itemOptions)
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    
+                    }
+                })
+            }
+            else {
+                $('#TempSelect').change(function() {
+                    var selectCurrentType = $(this).val(); //获取当前选择的 显示类型[type、checkbox、radio]
+                    var currentSelectCtrlName = $('#selectName').val(); //获取当前选择的CtrlName
+                    var selectArr=[];//设置空的数组
+                    var $TempSelectCtlName = $('#'+cid);
+                    $('#TempSelectCtlName').find("option:not(:first)").remove();
+                    //$('#CheckboxTempSelectCtlName option:not(:first)').remove();
+
+                    for(var i =0;i<itemLocalStorageArr.length;i++) {
+                        var item = itemLocalStorageArr[i];
+
+                        if((item.ctlname != currentSelectCtrlName) && (item.type == selectCurrentType)){
+                            var options = $('<option value = '+ item.ctlname + '>'+ item.ctlname+ '</option>');
+                            selectArr.push(item.ctlname);
+                            if(selectArr.indexOf(item.ctlname) != -1){
+                                $TempSelectCtlName.append(options);
+                            }  
+                        }
+
+                        var getCtlNameValue = $TempSelectCtlName.val(); //获取当前选择的ctlname
+                        var SelectedCtlNameValue = getCtlNameValue || ''; 
+
+                        var selectChildArr=[]; 
+                        var $TempSelectData = $('#'+id+'Data');
+                        if(!SelectedCtlNameValue) {
+                            $('#TempSelectCtlName').change(function() {
+                                $('#TempSelectData').find("option:not(:first)").remove();
+                                //$('#CheckboxTempSelectData option:not(:first)').remove();
+                                for(var j =0;j<itemLocalStorageArr.length;j++) {
+                                    var item = itemLocalStorageArr[j];
+                                    if(item.ctlname == $(this).val()) {
+                                        var itemData = item.options.data;
+                                        for(var k=0;k<itemData.length;k++) {
+                                            var itemOptions = $('<option value = '+ itemData[k].text +'>'+ itemData[k].text+ '</option>');
+                                            selectChildArr.push(itemData[k].text);
+                                            if(selectChildArr.indexOf(itemData[k].text) != -1){
+                                               $TempSelectData.append(itemOptions)
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                        else{
+                            $('#TempSelectData').find("option:not(:first)").remove();
+                            for(var j =0;j<itemLocalStorageArr.length;j++) {
+                                var item = itemLocalStorageArr[j];
+                                if(item.ctlname == SelectedCtlNameValue) {
+                                    var itemData = item.options.data;
+
+                                    for(var k=0;k<itemData.length;k++) {
+                                        var itemOptions = $('<option value = '+ itemData[k].text +'>'+ itemData[k].text+ '</option>');
+                                        selectChildArr.push(itemData[k].text);
+                                        if(selectChildArr.indexOf(itemData[k].text) != -1){
+                                           $TempSelectData.append(itemOptions)
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                        }  
+                    }
+                })
+            }
+            
+        }
+    </script>
+</body>
+</html>

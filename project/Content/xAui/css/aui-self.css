@@ -1,0 +1,29 @@
+﻿body {
+}
+
+.aui-dialog-body {
+    padding:0;
+}
+
+.pull-right {
+    float:right;
+}
+.aui-self-list-view {
+    height:300px;
+    overflow-y: auto;
+}
+.aui-self-list-view b {
+    color:#808080;
+}
+.aui-self-list-view li {
+    display:flex;
+    align-items:center;
+    padding:10px;
+}
+.aui-self-list-view .radio {
+    margin-right:10px;
+}
+.aui-self-list-view .aui-img-body{
+    width:100%;
+    font-size:12px;
+}

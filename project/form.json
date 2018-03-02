@@ -1,0 +1,71 @@
+[
+    {
+        name:'公司名称',
+        engname:'CompanyName',
+        ctlname:'CompanyName1', // 添加到页面时生成，按现有页面加入该控件数量递增
+        type: 'text',
+        template: '#template_text',
+        options:{
+            title:'公司名称',
+            prompt: '我是一个公司名称', // 文本框内提示文本，文本框特有
+            required: 'required'
+            valueDefault: '',
+            hidden: tue, // false 不显示，等于 false 时 不再考虑 showRelation
+            viewRelation: null // 显示条件 为 null 总是显示
+        },
+        value: '',
+        valueEx: '', // 对于文本框没什么用
+    },
+    {
+        name:'选择专业',
+        engname:'SelSpec',
+        ctlname:'SelSpec1',
+        type: 'checkbox',
+        template: '#template_checkbox',
+        options:{
+            title:'选择专业',
+            prompt: '我是一个公司名称',
+            url: 'aaa.json', // 有 url 的话就通过 ajax 同步 get 回数据到 data 属性，忽略下面配的 data 属性
+            data: [
+                { text: '选项1', value: ''},
+                { text: '选项2', value: ''},
+                { text: '其他', value: ''},
+                { text: '其他_', value: ''}, // 其他后面含文本框
+            ],
+            required: 'required',
+            valueDefault: '选项1,选项2',
+            hidden: false, // false 不显示，等于 false 时 不再考虑 showRelation
+            showRelation: { // 显示条件
+                'Sex1': {
+                    value:'男',
+                    show: true
+                }
+            }
+        },
+        value: '选项2,其他_',
+        valueEx: '其他文本框内容',
+    },
+    {
+        name:'性别',
+        engname:'Sex',
+        ctlname:'Sex1',
+        type: 'radio',
+        template: '#template_radio',
+        options: {
+            title:'性别',
+            url: '',// 有 url 的话就通过 ajax 同步 get 回数据到 data 属性，忽略下面配的 data 属性
+            data: [
+                { text: '男', value: ''},
+                { text: '女', value: ''},
+                { text: '其他', value: ''},
+                { text: '其他_', value: ''}, // 其他后面含文本框
+            ],
+            required: 'required'
+            valueDefault: '男',
+            hidden: false, // false 不显示，等于 false 时 不再考虑 showRelation
+            viewRelation: null
+        },
+        value: '女',
+        valueEx: '其他文本框内容',
+    }
+]

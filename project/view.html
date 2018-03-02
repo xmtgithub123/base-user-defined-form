@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link href="Content/mobileUI/winu-ui.css" rel="stylesheet" />
+    <link href="Content/alert.mob.css" rel="stylesheet" />
+    <link href="Content/xAui/css/aui-self.css" rel="stylesheet" />
+    <link href="Content/xAui/css/aui.css" rel="stylesheet" />
+    <link href="Content/mobileUI/aui/aui.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .p-0 {
+            padding:0;
+        }
+        .p-5 {
+            padding:5px;
+        }
+        .mt-15 {
+            margin-top:15px;
+        }
+        input[type="button"] {
+            font-size:14px;
+        }
+        .dl {display: inline-block;}
+        .aui-input-sm {
+            padding:5px 15px !important;
+            border:1px solid #ddd !important;
+        }
+        .aui-input-row label.aui-input-addon {
+            vertical-align: middle;
+        }
+        select {
+            display: inline-block;
+            margin-bottom: 0;
+            padding: 5px 15px;
+            width: 98%;
+            font-size:12px;
+        }
+    </style>
+</head>
+<body>
+<div class="aui-content">
+
+        <form class="aui-form" id="AuiFormView">
+                <div id="formBox"></div> 
+        </form>
+        <script id="template_text" type="text/x-dot-template">
+            <div class="aui-form">
+                {{for (var i=0;i<it.length;i++) {}}
+                    <div class="aui-input-row">
+                        {{? it[i].type =='text'}}
+                            {{? it[i].options.required =='true'}}
+                            <b class="aui-input-addon aui-text-danger" style="position: static;">*</b>
+                            {{?}}
+                            <span class="aui-input-addon">{{=it[i].options.title}}
+                                <input type="{{=it[i].type}}" class="aui-input dl" id="{{=it[i].ctlname}}_{{=i}}" name="{{=it[i].ctlname}}" value="{{=it[i].value}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" placeholder="{{=it[i].options.prompt}}" />
+                            </span>
+                            
+                            
+                        {{?? it[i].type =='checkbox'}} 
+                            {{? it[i].options.required =='true'}}
+                                <b class="aui-input-addon aui-text-danger" style="position: static;">*</b>
+                            {{?}}
+                            <span class="aui-input-addon">{{=it[i].options.title}}</span>
+                          
+                            {{for (var j=0,data=it[i]['options']['data'].length;j<data;j++) {}}
+
+                                
+                                <label class="aui-input-addon" style="padding-top:0;display: block;width:98%;">
+                                    <input type="checkbox" class="aui-input dl" id="{{=it[i].ctlname}}_{{= j}}"  value="{{=it[i]['options']['data'][j].text}}"  name="{{=it[i].ctlname}}" data-check="{{=it[i]['options']['data'][j].text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
+                                    {{? it[i]['options']['data'][j].text =="其他_"}}
+                                    <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_other_text" class="select1 dl" name="{{=it[i].ctlname}}_other_text" placeholder="" value="{{=it[i].valueEx}}" style="float:none;display: inline-block;width:70%;" />
+                                    {{?}}
+                                </label>
+                                
+
+                            {{}}}
+                            
+                        {{??}}
+                            {{? it[i].options.required =='true'}}
+                                <b class="aui-input-addon aui-text-danger" style="position: static;">*</b>
+                            {{?}}
+                            <span class="aui-input-addon">{{=it[i].options.title}}</span>
+                            {{for (var j=0,data=it[i]['options']['data'].length;j<data;j++) {}}
+                                <label class="aui-input-addon" style="padding-top:0 ;display: block;width:98%;">
+                                    <input type="radio" class="aui-input" id="{{=it[i].ctlname}}_{{= j}}"  name="{{=it[i].ctlname}}" data-radio="{{=it[i]['options']['data'][j].text}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" value=""  style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
+                                     {{? it[i]['options']['data'][j].text =="其他_"}}
+                                        <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_othe_text" class="select1 dl" name="other_text" placeholder="" value="" style="float:none;display: inline-block;width:70%;" />
+                                    {{?}}
+                                </label>
+                            {{}}}
+                        {{?}}
+                    </div>
+                {{}}}
+                <div class="aui-btn-row">
+                    <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveViewData()">保存</div>
+                </div> 
+            </div>
+        </script>
+       <!--  <script id="template_checkout" type="text/x-dot-template"></script>
+        <script id="template_radio" type="text/x-dot-template"></script>
+ -->
+        <div class="aui-row mt-15">
+            
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <script src="Scripts/jquery.min.js" type="text/javascript"></script>
+    <script src="Scripts/prototypeEx.js"></script>
+    <script src="Content/xAui/script/api.js"></script>
+    <script src="Scripts/doT.min.js"></script>
+    <script src="Scripts/alert.mob.js"></script>
+    <script type="text/javascript">
+        //首先获取本地存储的itemArr数组数据
+        var GetlocalStorageItemArr =JSON.parse(localStorage.getItem("itemArr") || "[]");
+       //console.log(GetlocalStorageItemArr);
+
+        //获取地址栏中cttlname 参数 
+        // var getHrefParam = getQueryString('ctlname');
+        // console.log(getHrefParam)
+        // for(var i =0;i<GetlocalStorageItemArr.length;i++) {
+        //     console.log(GetlocalStorageItemArr)
+        // }
+        window.onload = function() {
+            for(var i =0;i<GetlocalStorageItemArr.length;i++) {
+                var item = GetlocalStorageItemArr[i];
+                console.log(item)
+                var valueDefault = item.options.valueDefault;
+                var data = item.options.data || '';
+                var showRelation = item.options.viewRelation || [];
+                //console.log(showRelation);
+
+                
+                //页面加载之后判断本地数据的hidden属性
+                if(item.options.hidden =='false') {
+                    var ctrlname = item.ctlname;
+                    $('input[name='+ ctrlname+']').parent().parent().hide();
+                }
+
+                //如果某个控件 存在showRelation的设置,则如下代码
+                if(showRelation.length > 0) {
+                    for(var b=0;b<showRelation.length;b++) {
+                        var sitem = showRelation[b]
+                     //   console.log(showRelation[b]);
+                        if(sitem.show =='true') {
+                            var NeedFindItem = findItem(sitem.ctlname);
+                            if(NeedFindItem.ctlname == sitem.ctlname) {
+                                var vDefalut = NeedFindItem.options.valueDefault;
+                                for(var m=0;m<vDefalut.length;m++){ //遍历默认值
+                                    var vditem = vDefalut[m];
+                                    if(vditem == sitem.value) { //如果某控件的默认值正好等于viewRelation的value,那么直接将关联的控件显示
+                                        $('input[name='+ item.ctlname+']').parent().parent().show();
+                                    }
+                                }
+                                var ctlname_ = item.ctlname
+                                var concatInputAttr = NeedFindItem.ctlname+'_'+sitem.value;
+                              
+                                $('input[name='+sitem.ctlname+']').click(function(){
+                                    if(concatInputAttr == $(this).attr('data-relation') ){
+                                        $('input[name='+ ctlname_+']').parent().parent().show();
+                                    }
+                                    else {
+                                        $('input[name='+ ctlname_+']').parent().parent().hide();
+                                    }
+                                        
+                                })
+                                
+                            }
+                            
+                        }
+                    }
+                }
+                
+                //循环遍历 根据默认值来设置是否选中
+                for(var j =0;j<data.length;j++) {
+                    var dataitem = data[j];
+                    for(var k=0;k<valueDefault.length;k++) {
+                        var vditem = valueDefault[k];
+                        if(dataitem.text == vditem) {
+                           if(item.type =='radio'){
+                                $('input[data-radio='+dataitem.text+']').attr('checked','checked');
+                           }
+                           else {
+                                $('input[data-check='+dataitem.text+']').attr('checked','checked');
+                           }
+                        }
+                    }
+                }
+
+                
+            }
+        }
+        function findItem(CName) {
+            for(var i=0;i<GetlocalStorageItemArr.length;i++) {
+                var itemOne = GetlocalStorageItemArr[i];
+                if(itemOne.ctlname == CName) {
+                    return itemOne;
+                }
+            }
+        }
+       var interText = doT.template($('#template_text').text());
+       $('#formBox').html(interText(GetlocalStorageItemArr));
+
+        
+
+       function saveViewData() {
+            // var formVali = $('#AuiFormView').validate({
+            //     rules: {
+                    
+            //     },
+            //     messages: {
+                    
+            //     }
+            // });
+            // isValidate = formVali.form();
+            var formData = DomUtil.serialize(document.getElementById('AuiFormView'));
+            console.log(formData)
+       }
+        //接受URL地址参数 
+        // function getQueryString(name) {//name为传入参数
+        //     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");     
+        //     var r = window.location.search.substr(1).match(reg);
+        //     if (r != null) return unescape(r[2]); return null;                      
+        // }
+    </script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+
+
+/*设 校 审 状态颜色*/
+.m-5 {
+    margin:5px;
+}
+.mb-15 {
+    margin-bottom:15px;
+}
+.node-example {
+    padding: 6px;
+        font-size: 14px;
+        white-space:nowrap;
+}
+
+.node-status-0-bg {
+    background-color: #d8d8d8 !important;
+}
+
+.node-status-1-bg {
+    background-color: #f3d963 !important;
+}
+
+.node-status-2-bg {
+    background-color: #5adcbb !important;
+}
+
+.node-status-3-bg {
+    background-color: #6fc0e8 !important;
+}
+
+.node-status-4-bg {
+    background-color: #ea8a8a !important;
+}
+.approve-node{
+    float:none !important;
+    display:normal !important;
+    min-width: 64px;
+}
+/* AUI 样式框架覆盖 开始*/
+
+
+.aui-tab-nav.aui-tab-nav-blue li.active {
+	color: #3498DB;
+	border-bottom: 2px #3498DB solid;
+}
+
+.aui-list-view:empty {
+	visibility: hidden;     
+}
+
+.aui-user-view:empty {
+	visibility: hidden;                                  
+}
+
+.aui-img-object {
+	background-color: #f6f6f6;
+	width: 48px;
+}
+
+.aui-img-object.aui-img-object-16px {
+	width:18px !important; 
+	height:18px !important; 
+	line-height:18px !important;
+	vertical-align: middle;
+}
+
+.aui-ellipsis-1 {
+	padding-right: 0px;
+}
+
+.aui-input-row {
+	padding-left: 8px;
+	padding-right: 10px;
+}
+
+.aui-input-row label.aui-input-addon {
+	font-size: 16px;
+	vertical-align: top;
+	padding-top: 13px;
+	min-width: 80px;
+	text-align : left;
+}
+
+.aui-input-row b.aui-input-addon {
+	vertical-align: top;
+	padding-top: 13px;
+	font-size: 16px;
+	font-weight: bold;
+	position: absolute;
+	left: 0px;
+}
+
+.aui-input-row u.aui-input-addon {
+	vertical-align: top;
+	padding-top: 8px;
+	font-size: 22px;
+	color: #bbbbbb;
+	text-decoration : none;
+}
+
+.aui-input-row i.aui-input-addon {
+	font-size: 22px;
+	color: #bbbbbb;
+}
+
+#aui-footer {
+	border-top: 1px solid #c8c7cc;
+}
+
+
+/* AUI 样式框架覆盖 结束 */
+
+.pageTopShadow {
+	border:none;
+	box-shadow: 0px 1px 3px #333;
+	height:1px;
+	width: 110%;
+	background-color: #f4f4f4;
+	position: fixed;
+	top:-1px;
+	left: -5%;
+	z-index: 99999;
+}
+
+.img-circle {
+	border-radius: 50% !important;
+}
+
+.winu-borderBottom_0 {
+	border-bottom: 0px solid #000;
+}
+
+.winu-borderTop_0 {
+	border-top: 0px solid #000;
+}
+
+.winu-borderRadius-5 {
+	border-radius: 5px !important;
+}
+
+.winu-textBg-white {
+	color: #ffffff !important;
+}
+
+.win-width-forid {
+	width: 40px;
+}
+
+.winu-width-100 {
+	width: 100%;
+}
+.winu-white-spance-nowrap {
+	white-space: nowrap;
+}
+.winu-background-opacity {
+	background: rgba(0,0,0,0);
+}
+.winu-background-white {
+	background: #fff;
+}
+.winu-clear-both {
+	clear: both;
+}
+.winu-text-align-center {
+	text-align: center;
+}
+.winu-text-align-left {
+	text-align: left;
+}
+.winu-text-align-right {
+	text-align: right;
+}
+.winu-float-left {
+	float: left;
+}
+.winu-float-right {
+	float: right;
+}
+.winu-float-none {
+	float: none;
+}
+.winu-display-none {
+	display: none;
+}
+.winu-display-block {
+	display: block;
+}
+.winu-display-inline {
+	display: inline;
+}
+.winu-display-inline-block {
+	display: inline-block;
+}
+.winu-box-sizing-border-box {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+.winu-box-sizing-content-box {
+	box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+}
+.winu-position-absolute {
+	position: absolute;
+}
+.winu-position-relative {
+	position: relative;
+}
+.winu-position-fixed {
+	position: fixed;
+}
+.winu-min-height {
+	min-height: 0;
+	height: auto;
+	overflow: hidden;
+}
+.winu-pre {
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+	font-size: 16px;
+}
+.winu-flex-box-vertical {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-flex-flow: column;
+	flex-flow: column;
+	height: 100%;
+}
+.winu-flex-box-horizontal {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-flex-flow: row;
+	flex-flow: row;
+	width: 100%;
+}
+.winu-flex-item {
+	-webkit-box-flex: 1;
+	-webkit-flex: 1;
+	flex: 1;
+}
+.winu-maring-top-10 {
+	margin-top: 10px;
+}
+.winu-center-all {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	display: box;
+	box-orient: horizontal;
+	box-pack: center;
+	box-align: center;
+}
+.winu-center-vertical {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	display: box;
+	box-orient: vertical;
+	box-pack: center;
+	box-align: center;
+}
+.winu-center-horizontal {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: center;
+	display: box;
+	box-orient: horizontal;
+	box-pack: center;
+}
+.winu-center-horizontal-end {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: end;
+	display: box;
+	box-orient: horizontal;
+	box-pack: end;
+}
+.winu-center-horizontal-start {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: start;
+	display: box;
+	box-orient: horizontal;
+	box-pack: start;
+}
+.winu-border-radius-50 {
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+}
+.winu-transition-all {
+	transition: All 1.5s ease;
+	-webkit-transition: All 1.5s ease;
+}
+
+/*颜色扩展*/
+
+.bg-blue {
+  border-color: #3598dc !important;
+  background-image: none !important;
+  background-color: #3598dc !important;
+  color: #FFFFFF !important;
+}
+
+.bg-blue-hoki {
+  border-color: #67809F !important;
+  background-image: none !important;
+  background-color: #67809F !important;
+  color: #FFFFFF !important;
+}
+
+.bg-blue-steel {
+  border-color: #4B77BE !important;
+  background-image: none !important;
+  background-color: #4B77BE !important;
+  color: #FFFFFF !important;
+}
+
+.bg-blue-madison {
+  border-color: #578ebe !important;
+  background-image: none !important;
+  background-color: #578ebe !important;
+  color: #FFFFFF !important;
+}
+
+.bg-blue-hoki {
+  border-color: #67809F !important;
+  background-image: none !important;
+  background-color: #67809F !important;
+  color: #FFFFFF !important;
+}
+
+.bg-blue-chambray {
+  border-color: #2C3E50 !important;
+  background-image: none !important;
+  background-color: #2C3E50 !important;
+  color: #FFFFFF !important;
+}
+
+.bg-red {
+  border-color: #cb5a5e !important;
+  background-image: none !important;
+  background-color: #cb5a5e !important;
+  color: #FFFFFF !important;
+}
+
+.bg-red-pink {
+  border-color: #E08283 !important;
+  background-image: none !important;
+  background-color: #E08283 !important;
+  color: #FFFFFF !important;
+}
+
+.bg-yellow-gold {
+  border-color: #E87E04 !important;
+  background-image: none !important;
+  background-color: #E87E04 !important;
+  color: #FFFFFF !important;
+}
+
+.bg-yellow-casablanca {
+  border-color: #f2784b !important;
+  background-image: none !important;
+  background-color: #f2784b !important;
+  color: #FFFFFF !important;
+}
+
+.bg-purple-plum {
+  border-color: #8775a7 !important;
+  background-image: none !important;
+  background-color: #8775a7 !important;
+  color: #FFFFFF !important;
+}
+
+.bg-purple-medium {
+  border-color: #BF55EC !important;
+  background-image: none !important;
+  background-color: #BF55EC !important;
+  color: #FFFFFF !important;
+}
+
+.bg-purple-studio {
+  border-color: #8E44AD !important;
+  background-image: none !important;
+  background-color: #8E44AD !important;
+  color: #FFFFFF !important;
+}
+
+.bg-grey {
+  border-color: #E5E5E5 !important;
+  background-image: none !important;
+  background-color: #E5E5E5 !important;
+  color: #333333 !important;
+}
+
+.bg-grey-silver {
+  border-color: #BFBFBF !important;
+  background-image: none !important;
+  background-color: #BFBFBF !important;
+  color: #FAFCFB !important;
+}
+
+.bg-grey-cascade {
+  border-color: #95A5A6 !important;
+  background-image: none !important;
+  background-color: #95A5A6 !important;
+  color: #FFFFFF !important;
+}
+
+.bg-grey-gallery {
+  border-color: #555555 !important;
+  background-image: none !important;
+  background-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+/* 金曲流程控件样式 */
+#jqApproveBar > li {
+	padding: 10px;
+}
+#jqApproveBar .aui-btn-block {
+	padding: 5px;
+}
+#jqApproveBar .loading {
+	width: 32px;
+	height: 32px;
+	vertical-align: middle;
+}
+#jqApproveBar .aui-tips-content {
+	line-height: 55px;
+	height: 55px;
+}
+
+
+/*控件只读样式*/
+.jq-radio-disabled:checked{
+    background-color: #ddd;
+    border: solid 1px #ddd;
+}
+.jq-text-disabled{
+    color: #898787;
+}
