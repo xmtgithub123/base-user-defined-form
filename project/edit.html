@@ -44,14 +44,15 @@
         <div class="aui-row mt-15">
             <input type="button" id="textBtn" namne="textBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:50px;display: inline-block;" value="新增" onclick="NewAdd();"/>
            <!--  <input type="button" id="checkboxBtn" namne="checkboxBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:50px;display: inline-block;" value="编辑"/> -->
-            <input type="button" id="radioBtn" namne="radioBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:50px;display: inline-block;" value="删除"/>
+            <input type="button" id="radioBtn" namne="radioBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:50px;display: inline-block;" onclick="removeOneItem()" value="删除"/>
             
             <a class="aui-btn aui-btn-block aui-btn-success p-0" id="refresh" href="javascript:void(0)" onclick="location.reload()" style="width:50px;display: inline-block;font-size: 14px;">刷新 </a>
             <a class="aui-btn aui-btn-block aui-btn-success p-0" href="javascript:void(0)" style="width:50px;display: inline-block;font-size: 14px;" onclick="toPreview()" >预览</a>
         </div>
        
         <div class="aui-row mt-15">
-           <select id="selectName" name="TimeSpanPm" style="width:60%;font-size:12px;" value="" >
+
+           <select id="selectName" name="TimeSpanPm" style="width:60%;font-size:12px;margin-left:10px;" value="" >
                <option value="" disabled="" selected>请选择</option>
             </select>
            <input type="button" id="edit" namne="" class="aui-btn aui-btn-block aui-btn-success p-5" style="width:60px;display: inline-block;" onclick="toEdit()" value="编辑"/>
@@ -89,7 +90,8 @@
             
             <!-- 文本模板 -->
             <script id="template_text" type="text/x-dot-template">
-                <div class="aui-form">
+                
+                <div class="aui-form" data-type={{=it.type}}>
                     <div class="aui-input-row">
                         <span class="aui-input-addon">{{=it.name}}</span>
                         <input type="text" class="aui-input" id="title" name="title" placeholder="{{=it.options.prompt}}" value="{{=it.options.title ==''?'':it.options.title}}" />
@@ -104,39 +106,7 @@
                         {{?}}
                         </span>
                     </div>  
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">显示类型</span>
-                        <select id="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
-                            <option value="" disabled="" selected>请选择</option>
-                            <option value="radio">单选框</option>
-                            <option value="checkbox">复选框</option>
-                        </select>
-                        
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">具体ctlname</span>
-                        <select id="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;">
-                            <!-- 显示showRelation[0]-->
-                            <option value="" disabled="" selected>请选择</option>
-                        </select>
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">Data</span>
-                        <select id="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;">
-                            <!-- 显示showRelation[0]-->
-                            <option value="" disabled="" selected>请选择</option>
-                        </select>
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">是否显示</span>
-                        <select id="show" name="show"  value="" style="display:inline-block;">
-                            <option value="" disabled="" selected>请选择</option>
-                            <option value="true">显示</option>
-                            <option value="false">隐藏</option>
-                        </select>
-                    </div>
-                   
-                    
+
                     <div class="aui-input-row">
                         <span class="aui-input-addon">
                         {{? it.options.required =='true'}}
@@ -147,6 +117,87 @@
                         
                         </span>
                     </div>  
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">满足以下</span>
+                        <select id="TempSelectCondition" name="TempSelectCondition"  data-select="{{=it.showCondition}}" value="{{=it.showCondition}}" style="display:inline-block;">
+                            <option value="all">所有</option>
+                            <option value="anyOne">任何一个</option>
+                        </select>
+                        <span class="aui-input-addon">条件时显示</span>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <input type="hidden" name="relationshow" id="relationshow" value="">
+                        <table class="aui-table" id="showConditionTable" style="width:100%;table-layout: fixed;margin-left:5px;">
+                            <thead>
+                                <tr>
+                                    <td>显示类型</td>
+                                    <td>具体ctlname</td>
+                                    <td>data</td>
+                                    <!-- <td>是否显示</td> -->
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody id="showConditionTbody">
+                            {{? it['options']['viewRelation'] != null}}
+                                {{for (var j=0,showRelation=it.options.viewRelation.length;j<showRelation;j++) {}}
+                                    <tr class="s_tr_show">
+                                        <td>
+                                            <input type="text" id="TempSelectValue" name="TempSelectValue" data-item="TempSelect" value="{{=it.options.viewRelation[j].type}}" disabled="disabled">
+                                        </td>
+                                        <td>
+                                            <input type="text" id="TempSelectCtlNameValue" name="TempSelectCtlNameValue"  data-item="TempSelectCtlName" value="{{=it.options.viewRelation[j].ctlname}}" disabled="disabled">
+                                        </td>
+                                        <td>
+                                            <input type="text" id="TempSelectDataValue" name="TempSelectDataValue" data-item="TempSelectData" value="{{=it.options.viewRelation[j].value}}" disabled="disabled">
+                                        </td>
+                                       <!--  <td>
+                                            <input type="text" id="showValue" name="showValue" data-item="show" value="{{=it.options.viewRelation[j].show}}" disabled="disabled">
+                                        </td> -->
+                                        <td>
+                                            <div class="aui-btn aui-btn-block aui-btn-success p-5 dl" onclick="removeTrBtn(this,0)" style="width:30px;" disabled="disabled">x</div>
+                                            
+                                        </td>
+                                    </tr>
+                                {{}}}
+                            {{??}}
+                                <tr id="s_tr_0">
+                                    <td>
+                                        <select class="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                            <option value="radio">单选框</option>
+                                            <option value="checkbox">复选框</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;">
+                                        <!-- 显示showRelation[0]-->
+                                            <option value="" disabled="" selected>请选择</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                        </select>
+                                    </td>
+                                   <!--  <td>
+                                        <select class="show" name="show"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                            <option value="true">显示</option>
+                                            <option value="false">隐藏</option>
+                                        </select>
+                                    </td> -->
+                                    <td>
+                                        <div class="aui-btn aui-btn-block aui-btn-success p-5 dl" onclick="removeTrBtn(this,0)" style="width:30px;">x</div>
+                                        
+                                    </td>
+                                </tr>
+                            {{?}}
+                            </tbody>
+                        </table>
+                        <a href="javascript:void(0);" style="margin-left:5px;" onclick="addTrConditionBtn()">添加条件</a>
+                    </div>
+                   
+                
                     <div class="aui-input-row">
                         <span class="aui-input-addon">测试value</span>
                         <input type="text" class="aui-input" id="value" name="value" value="" />
@@ -165,15 +216,13 @@
 
             <!-- 多选框模板 -->
             <script id="template_checkbox" type="text/x-dot-template">
-                <div class="aui-form">
+                <div class="aui-form" data-type={{=it.type}}>
                     <div class="aui-input-row">
                         <span class="aui-input-addon">{{=it.name}}</span>
                         <input type="text" class="aui-input" id="title" name="title" value="{{=it.options.title ==''?'':it.options.title}}" placeholder="{{=it.options.prompt}}" />
                     </div>  
-
-                    <!-- 是否显示关系视图(隐藏[隐藏时不显示但也可以配置]或显示) -->
                     <div class="aui-input-row" >
-                        <span class="aui-input-addon">
+                       <span class="aui-input-addon ischecked">
                         {{? it.options.hidden =='true' }}
                         <input type="checkbox" class="aui-input" id="hidden" name="hidden"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>是否显示设置
                         {{??}} 
@@ -181,41 +230,6 @@
                         {{?}}
                         </span>
                     </div>  
-                    <!-- 选择框显示 -->
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">选择类型</span>
-                        <select id="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
-                            <option value="" disabled="" selected>请选择</option>
-                            <option value="radio">单选框</option>
-                            <option value="checkbox">复选框</option>
-                        </select>
-                        
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">具体ctlname</span>
-                        <select id="TempSelectCtlName" name="TempSelectContentCtlName"  value="" style="display:inline-block;">
-                            <!-- 显示showRelation[0]-->
-                            <option value="" disabled="" selected>请选择</option>
-                        </select>
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">Data</span>
-                        <select id="TempSelectData" name="TempSelectData"   value="" style="display:inline-block;">
-                            <!-- 显示showRelation[0]-->
-                            <option value="" disabled="" selected>请选择</option>
-                        </select>
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">是否显示</span>
-                        <select id="show" name="show"  value="" style="display:inline-block;">
-                            <option value="" disabled="" selected>请选择</option>
-                            <option value="true">显示</option>
-                            <option value="false">隐藏</option>
-                        </select>
-                    </div>
-
-
-
                     <div class="aui-input-row">
                         <span class="aui-input-addon">
                         {{? it.options.required =='true'}}
@@ -226,31 +240,120 @@
                         
                         </span>
                     </div>  
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">满足以下</span>
+                        <select id="TempSelectCondition" name="TempSelectCondition"  data-select="{{=it.showCondition}}" value="{{=it.showCondition}}" style="display:inline-block;">
+                            <option value="all">所有</option>
+                            <option value="anyOne">任何一个</option>
+                        </select>
+                        <span class="aui-input-addon">条件时显示</span>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <input type="hidden" name="relationshow" id="relationshow" value="">
+                        <table class="aui-table" id="showConditionTable" style="width:100%;table-layout: fixed;margin-left:5px;">
+                            <thead>
+                                <tr>
+                                    <td>显示类型</td>
+                                    <td>具体ctlname</td>
+                                    <td>data</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody id="showConditionTbody">
+                               {{? it['options']['viewRelation'] != null}}
+                                {{for (var j=0,showRelation=it.options.viewRelation.length;j<showRelation;j++) {}}
+                                    <tr class="s_tr_show">
+                                        <td>
+                                            <input type="text" id="TempSelectValue" name="TempSelectValue" data-item="TempSelect" value="{{=it.options.viewRelation[j].type}}" disabled="disabled">
+                                        </td>
+                                        <td>
+                                            <input type="text" id="TempSelectCtlNameValue" name="TempSelectCtlNameValue"  data-item="TempSelectCtlName" value="{{=it.options.viewRelation[j].ctlname}}" disabled="disabled">
+                                        </td>
+                                        <td>
+                                            <input type="text" id="TempSelectDataValue" name="TempSelectDataValue" data-item="TempSelectData" value="{{=it.options.viewRelation[j].value}}" disabled="disabled">
+                                        </td>
+                                      
+                                        <td>
+                                            <div class="aui-btn aui-btn-block aui-btn-success p-5 dl" onclick="removeTrBtn(this,0)" style="width:30px;" disabled="disabled">x</div>
+                                            
+                                        </td>
+                                    </tr>
+                                {{}}}
+                                {{??}}
+                                <tr id="s_tr_0">
+                                    <td>
+                                        <select class="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                            <option value="radio">单选框</option>
+                                            <option value="checkbox">复选框</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;">
+                                        <!-- 显示showRelation[0]-->
+                                            <option value="" disabled="" selected>请选择</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="aui-btn aui-btn-block aui-btn-success p-5 dl" onclick="removeTrBtn(this,0)" style="width:30px;">x</div>
+                                        
+                                    </td>
+                                </tr>
+                            {{?}}
+                                
+                            </tbody>
+                        </table>
+                        <a href="javascript:void(0);" style="margin-left:5px;" onclick="addTrConditionBtn()">添加条件</a>
+                    </div>
+
+                   
                     <div class="aui-input-row">
                         <span class="aui-input-addon">选项设置</span>
-                        {{~it.options.data:value:index}}
-                            <div style="display:block;" id="selectOptions_{{=index}}" data-index="{{=index}}" class="select-options">
-                                <label class="aui-input-addon" style="padding-top:0">
-                                    <input type="hidden" id="data" name='data'>
+                        <div class="optionsWrap">
+                             {{for (var j=0,dataOther=it.options.data.length;j<dataOther;j++) {}}
+                                {{? it['options']['data'][j].text !='其他'}}
+                                    <div style="display:block;" id="selectOptions_{{=j}}" data-j="{{=j}}" class="select-options_{{=it.ctlname}}">
+                                        <label class="aui-input-addon" style="padding-top:0">
+                                            <input type="hidden" id="data" name='data'>
 
-                                    <input type="checkbox" class="aui-input dl" id="valueDefaultChecked" name="valueDefaultChecked" data-check="{{=value.text}}" value="{{=value.text}}"  style="width:auto;margin-right:5px;float:none;display: inline-block;" />
-                                    <input type="text" class="aui-input aui-input-sm" id="" class="select1 dl" placeholder="{{=value.text}}" value="{{=value.text}}" style="float:none;display: inline-block;width:70%" />
-                                    <input type="button" id="addBtn" namne="addBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline" value="+"  onclick="addSelectItem('{{=index}}','checkbox')"/>
-                                    <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeSelectItem('{{=index}}')"/>
-                                </label>
-                            </div>
-                         
+                                            <input type="checkbox" class="aui-input dl" id="{{=it.ctlname}}_valueDefaultChecked_{{=j}}"  name="valueDefaultChecked_{{=it.ctlname}}" data-check="{{=it.ctlname}}_{{=it['options']['data'][j].text}}"  data-options="{{=it.ctlname}}" value="{{=it['options']['data'][j].text}}"  style="width:auto;margin-right:5px;float:none;display: inline-block;" />
+                                            <input type="text" class="aui-input aui-input-sm" id="" class="select1 dl" placeholder="{{=it['options']['data'][j].text}}" value="{{=it['options']['data'][j].text}}" data-options="{{=it.ctlname}}" style="float:none;display: inline-block;width:70%" />
+                                            <input type="button" id="addBtn" namne="addBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline" value="+"  onclick="addSelectItem('{{=j}}','checkbox','{{=it.ctlname}}')"/>
+                                            <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeSelectItem('{{=j}}')"/>
+                                        </label>
+
+                                    </div>
+                            {{?}}                               
+                            {{}}}
+
+                            {{for (var j=0,dataOther=it.options.data.length;j<dataOther;j++) {}}
+                                {{? it['options']['data'][j].text =='其他'}}
+                                    <div id="other"  class="select-options_other" style="display:block;">
+                                        <label class="aui-input-addon" style="padding-top:0">其他
+                                            <input type="text" class="aui-input aui-input-sm" id="ohter" name="ohter" class="select1 dl"  value="" style="float:none;display: inline-block;width:70%" disabled />
+                                            <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeOtherItem()"/>
+                                         </label>
+                                    </div>
+                                {{?}}                               
+                            {{}}}
+                            
+                        </div>
                         
-                        {{~}}
+                        <a href="javascript:void(0)" id="addOtherBtn" onclick="addOtherItem()">添加其它</a>
                     </div>
-                    <div class="aui-input-row">
+                   <!--  <div class="aui-input-row">
                         <span class="aui-input-addon">value</span>
                         <input type="text" class="aui-input" id="value" name="value" class="" value="{{=it.value ==''?'': it.value}}" />
                     </div>
                     <div class="aui-input-row">
                         <span class="aui-input-addon">valueEx</span>
                         <input type="text" class="aui-input" id="valueEx" class="valueEx" value="{{=it.valueEx ==''?'': it.valueEx}}" />
-                    </div>
+                    </div> -->
                     <div class="aui-btn-row">
                         <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveNewSetData('{{=it.ctlname}}')">保存</div>
                     </div>
@@ -260,61 +363,23 @@
 
             <!-- 单选框模板 -->
             <script id="template_radio" type="text/x-dot-template">
-                <div class="aui-form">
+                <div class="aui-form" data-type={{=it.type}}>
                     <div class="aui-input-row">
                         <span class="aui-input-addon">{{=it.name}}</span>
                         <input type="text" class="aui-input" id="title" name="title" value="{{=it.options.title ==''?'':it.options.title}}" placeholder="{{=it.options.prompt}}" />                  
                     </div>  
 
                      <!-- 是否显示关系视图(隐藏[隐藏时不显示但也可以配置]或显示) -->
-                    <div class="aui-input-row" >
-                        <span class="aui-input-addon">
-                        {{? it.options.hidden =='false' }}
+                     <div class="aui-input-row" >
+                        <span class="aui-input-addon ischecked">
+                        {{? it.options.hidden =='true' }}
                         <input type="checkbox" class="aui-input" id="hidden" name="hidden"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>是否显示设置
                         {{??}} 
                         <input type="checkbox" class="aui-input" style="width:auto;margin-right:10px;" id="hidden" name="hidden" value="true" />是否显示设置   
                         {{?}}
                         </span>
                     </div>  
-                    <!-- 选择框显示 -->
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">显示类型</span>
-                        <select id="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
-                            <option value="" disabled="" selected>请选择</option>
-                            <option value="radio">单选框</option>
-                            <option value="checkbox">复选框</option>
-                        </select>
-                        
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">具体ctlname</span>
-                        <select id="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;">
-                            <!-- 显示showRelation[0]-->
-                            <option value="" disabled="" selected>请选择</option>
-                        </select>
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">Data</span>
-
-                        <select id="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;">
-                            <!-- 显示showRelation[0]-->
-                            <option value="" disabled="" selected>请选择</option>
-                        </select>
-                    </div>
-                    <div class="aui-input-row" style="width:100%;">
-                        <span class="aui-input-addon">是否显示</span>
-                        <select id="show" name="show"  value="" style="display:inline-block;">
-                            <option value="" disabled="" selected>请选择</option>
-                            <option value="true">显示</option>
-                            <option value="false">隐藏</option>
-                        </select>
-                    </div>
-
-
-
-
-
-                    <div class="aui-input-row">
+                     <div class="aui-input-row">
                         <span class="aui-input-addon">
                          {{? it.options.required =='true'}}
                         <input type="checkbox" class="aui-input" id="required" name="required"  value="false"  style="width:auto;margin-right:10px;" checked='checked'/>这是必填项
@@ -323,29 +388,108 @@
                         {{?}}
                         </span>
                     </div>  
+                    <div class="aui-input-row" style="width:100%;">
+                        <span class="aui-input-addon">满足以下</span>
+                        <select id="TempSelectCondition" name="TempSelectCondition"  data-select="{{=it.showCondition}}" value="{{=it.showCondition}}" style="display:inline-block;">
+                            <option value="all">所有</option>
+                            <option value="anyOne">任何一个</option>
+                        </select>
+                        <span class="aui-input-addon">条件时显示</span>
+                    </div>
+                    <div class="aui-input-row" style="width:100%;">
+                        <input type="hidden" name="relationshow" id="relationshow" value="">
+                        <table class="aui-table" id="showConditionTable" style="width:100%;table-layout: fixed;margin-left:5px;">
+                            <thead>
+                                <tr>
+                                    <td>显示类型</td>
+                                    <td>具体ctlname</td>
+                                    <td>data</td>
+                                    <!-- <td>是否显示</td> -->
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody id="showConditionTbody">
+                                {{? it['options']['viewRelation'] != null}}
+                                {{for (var j=0,showRelation=it.options.viewRelation.length;j<showRelation;j++) {}}
+                                    <tr class="s_tr_show">
+                                        <td>
+                                            <input type="text" id="TempSelectValue" name="TempSelectValue" data-item="TempSelect" value="{{=it.options.viewRelation[j].type}}" disabled="disabled">
+                                        </td>
+                                        <td>
+                                            <input type="text" id="TempSelectCtlNameValue" name="TempSelectCtlNameValue"  data-item="TempSelectCtlName" value="{{=it.options.viewRelation[j].ctlname}}" disabled="disabled">
+                                        </td>
+                                        <td>
+                                            <input type="text" id="TempSelectDataValue" name="TempSelectDataValue" data-item="TempSelectData" value="{{=it.options.viewRelation[j].value}}" disabled="disabled">
+                                        </td>
+                                        <td>
+                                            <div class="aui-btn aui-btn-block aui-btn-success p-5 dl" onclick="removeTrBtn(this,0)" style="width:30px;" disabled="disabled">x</div>
+                                            
+                                        </td>
+                                    </tr>
+                                {{}}}
+                            {{??}}
+                                <tr id="s_tr_0">
+                                    <td>
+                                        <select class="TempSelect" name="TempSelect"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                            <option value="radio">单选框</option>
+                                            <option value="checkbox">复选框</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;">
+                                            <option value="" disabled="" selected>请选择</option>
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        <div class="aui-btn aui-btn-block aui-btn-success p-5 dl" onclick="removeTrBtn(this,0)" style="width:30px;">x</div>
+                                        
+                                    </td>
+                                </tr>
+                            {{?}}
+                            </tbody>
+                        </table>
+                        <a href="javascript:void(0);" style="margin-left:5px;" onclick="addTrConditionBtn()">添加条件</a>
+                    </div>
+
+                   
                     <div class="aui-input-row">
                         <span class="aui-input-addon">选项设置</span>
-                        {{~it.options.data:value:index}}
-                        <div style="display:block;" id="selectOptions_{{=index}}" data-index="{{=index}}" class="select-options">
-                            <label class="aui-input-addon" style="padding-top:0">
-                            <input type="radio" class="aui-input" class="name dl" id="valueDefaultChecked" name="valueDefaultChecked" value="{{=value.text}}"  data-radio="{{=value.text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" />
-                            <input type="text" class="aui-input aui-input-sm" id="" class="select1 dl" placeholder="" value="{{=value.text}}" style="float:none;display: inline-block;width:70%;" />
-                            <input type="button" id="addBtn" namne="addBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline" value="+"  onclick="addSelectItem('{{=index}}')"/>
-                            <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeSelectItem('{{=index}}','radio')"/>
-                            </label>
+                        <input type="hidden" id="checkedDefaultValue" name="checkedDefaultValue" value="">
+                        <div class="optionsWrap">
+                             {{for (var j=0,dataOther=it.options.data.length;j<dataOther;j++) {}}
+                                {{? it['options']['data'][j].text !='其他'}}
+                                    <div style="display:block;" id="selectOptions_{{=j}}" data-j="{{=j}}" class="select-options_{{=it.ctlname}}">
+                            
+                                        <label class="aui-input-addon" style="padding-top:0">
+                                        <input type="radio" class="aui-input" class="name dl" id="{{=it.ctlname}}_valueDefaultChecked_{{=j}}" name="valueDefaultChecked_{{=it.ctlname}}" value="{{=it['options']['data'][j].text}}"  data-radio="{{=it.ctlname}}_{{=it['options']['data'][j].text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" />
+                                        <input type="text" class="aui-input aui-input-sm" id="" class="select1 dl" placeholder="" value="{{=it['options']['data'][j].text}}" style="float:none;display: inline-block;width:70%;" />
+                                        <input type="button" id="addBtn" namne="addBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline" value="+"  onclick="addSelectItem('{{=j}}','radio','{{=it.ctlname}}')"/>
+                                        <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeSelectItem('{{=j}}','radio')"/>
+                                        </label>
+                                    </div>
+                                {{?}}                               
+                            {{}}}
+                            {{for (var j=0,dataOther=it.options.data.length;j<dataOther;j++) {}}
+                                {{? it['options']['data'][j].text =='其他'}}
+                                    <div id="other"  class="select-options_other" style="display:block;">
+                                        <label class="aui-input-addon" style="padding-top:0">其他
+                                            <input type="text" class="aui-input aui-input-sm" id="ohter" name="ohter" class="select1 dl"  value="" style="float:none;display: inline-block;width:70%" disabled />
+                                            <input type="button" id="removeBtn" namne="removeBtn" class="aui-btn aui-btn-block aui-btn-success p-0" style="width:26px;display:inline;" value="-" onclick="removeOtherItem()"/>
+                                         </label>
+                                    </div>
+                                {{?}}                               
+                            {{}}}
                         </div>
-                        
-                        
-                        {{~}}
+                        <a href="javascript:void(0)" id="addOtherBtn" onclick="addOtherItem()">添加其它</a>
                     </div>
-                    <div class="aui-input-row">
-                        <span class="aui-input-addon">value</span>
-                        <input type="text" class="aui-input" id="value" class="" name="value" value="{{=it.value ==''?'': it.value}}" />
-                    </div>
-                    <div class="aui-input-row">
-                        <span class="aui-input-addon">valueEx</span>
-                        <input type="text" class="aui-input" id="valueEx" name="valueEx" class="" value="{{=it.valueEx ==''?'': it.valueEx}}" />
-                    </div>
+
                      <div class="aui-btn-row">
                         <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveNewSetData('{{=it.ctlname}}')">保存</div>
                     </div>
@@ -369,7 +513,8 @@
     <script src="Content/xAui/script/api.js"></script>
     <script src="Scripts/doT.min.js"></script>
     <script src="Scripts/alert.mob.js"></script>
-    <script type="text/javascript">
+    <script src="Scripts/formscript.js"></script>
+  <!--   <script type="text/javascript">
         
         var itemArr = []; //定义空数组 用来存放新增的数据;
         var options_text = {
@@ -427,13 +572,16 @@
                 var options = $('<option value = '+ GetlocalStorageItemArr[i].ctlname +'>'+ GetlocalStorageItemArr[i].name + '+'+GetlocalStorageItemArr[i].ctlname+ '</option>');
                     $selectName.append(options);
             }
+
+
+
            
         }
         //头部“编辑”按钮
         function toEdit() {
             if($('#selectName').val()) {
                 var NeedEditItem = findItem($('#selectName').val());
-                console.log(NeedEditItem)
+             //   console.log(NeedEditItem)
                 showEdit(NeedEditItem);  
             }
             else {
@@ -455,6 +603,7 @@
                     engname:formData.engname,
                     ctlname:formData.engname + (GetlocalStorageItemArr.length + 1).toString() ,
                     type:formData.type,
+                    showCondition:'all',
                     template:'#template_'+formData.type,
                     options:'',
                     value:'',
@@ -478,34 +627,42 @@
         //显示对应的自定义控件
         function showEdit(NeedEditItem) {
             $('#formInfo').hide();
-            console.log(NeedEditItem)
+
+           // console.log(NeedEditItem)
             var dataInter = NeedEditItem;
             var itemType = NeedEditItem.type;
-            // var itemLocalStorageArr = JSON.parse(localStorage.getItem('itemArr'));
-            //console.log(itemLocalStorageArr)
 
             switch(itemType) {
                 case 'text': 
                             var interText = doT.template($('#template_text').text());
                             $('#formBox').html(interText(dataInter));
-
-                            setFormTypeSelectParam('TempSelect','TempSelectCtlName','text');
+                            setFormTypeSelectParam('s_tr_0','TempSelect','TempSelectCtlName','text');
                             break;
 
                 case 'checkbox':
                             var interText = doT.template($('#template_checkbox').text());
                             $('#formBox').html(interText(dataInter));
-                            setOptionChecked();
-                            setFormTypeSelectParam('TempSelect','TempSelectCtlName','checkbox');                           
+                            setOptionChecked(NeedEditItem.ctlname);
+                            setFormTypeSelectParam('s_tr_0','TempSelect','TempSelectCtlName','checkbox');                        
 
                             break;
                 case 'radio': 
                             var interText = doT.template($('#template_radio').text());
                             $('#formBox').html(interText(dataInter));
-                            setOptionChecked();
-                            setFormTypeSelectParam('TempSelect','TempSelectCtlName','radio');
+                            setOptionChecked(NeedEditItem.ctlname);
+                            setFormTypeSelectParam('s_tr_0','TempSelect','TempSelectCtlName','radio');
                             break;
             }
+            //满足条件显示根据数值显示对应选项
+            var v = $('#TempSelectCondition').attr('data-select');
+           
+            if(v == "anyOne") {
+                $('#TempSelectCondition').val('anyOne');
+            }
+            else {
+                $('#TempSelectCondition').val('all');
+            }
+
         }
 
         //遍历本地数据，根据ctlname查找对应的item数据，并返回对应的item对像
@@ -527,32 +684,111 @@
            // console.log(NeedFindItem)
 
             var dataArr = [], checkedArr = [];
-            $('.select-options').each(function(index,value){
+            $('.select-options_'+ctlname).each(function(index,value){
 
                 var v = $(this).find('input[type="text"]').val();
                 console.log(v)
                 $(this).find('input[type="text"]').attr('value',v);
                 $(this).find('input[type="text"]').parent().find('input[type="checkbox"]').attr('value',v).attr('data-check',v);
-
-
+                $(this).find('input[type="text"]').parent().find('input[type="radio"]').attr('value',v).attr('data-check',v);
                 dataArr.push({'text': v,'value':''});
             })
 
+            var checkboxValue = '';
+            $('.ischecked').each(function(index,value) {
+                var vv = $(this).find('input[name="hidden"]').is(':checked');
+                $(this).find('input[name="hidden"]').attr('value',vv);
+            })
+
+            var sArr = [];
+            $('#showConditionTable tbody tr').each(function(i,v){
+                var arr = [];
+
+                if($(this).attr('class') == 's_tr_show'){
+                    $(this).find('input[type="text"]').each(function(){
+
+                        var selectKey = $(this).attr('data-item');
+                        var selectValue = $(this).val();
+                        
+                        if(selectValue !=''){
+                            var temp = {
+                                'selectKey': selectKey,
+                                'selectValue' : selectValue,
+                            };
+                            arr.push(temp)
+                        }
+                    })
+                }
+
+                $(this).find('select option:selected').each(function (ti,tv) {
+
+                    var selectKey = $(this).parent().attr('name');
+                    var selectValue = $(this).val();
+                    
+                    if(selectValue !=''){
+                        var temp = {
+                            'selectKey': selectKey,
+                            'selectValue' : selectValue,
+                        };
+                        arr.push(temp)
+                    }
+                }); 
+              //  console.log(arr)
+               sArr.push(arr) 
+            })  
+
+           var relationArr = [];
+           for(var i =0;i<sArr.length;i++) {
+
+              var sArritem = sArr[i];
+
+              if(sArritem != '') {
+                var newobj = {};
+                  for(var j=0;j<sArritem.length;j++) {
+
+                    if(sArritem[j].selectKey == 'TempSelectCtlName') {
+                        newobj.ctlname = sArritem[j].selectValue;
+                        
+                    }
+                    if(sArritem[j].selectKey =='TempSelectData') {
+                        newobj.value  = sArritem[j].selectValue;
+                    }
+                    // if(sArritem[j].selectKey =='show'){
+                    //     newobj.show  = sArritem[j].selectValue;
+                    // }
+                    if(sArritem[j].selectKey =='TempSelect'){
+                        newobj.type  = sArritem[j].selectValue;
+                    }
+                  }
+                  relationArr.push(newobj)
+              }
+              
+           }
+            
+            //console.log(relationArr)
+            $('#relationshow').val(JSON.stringify(relationArr));
 
             var formTypeSetData = DomUtil.serialize(document.getElementById('auiFormTypeTemp'));
             console.log(formTypeSetData)
-                formTypeSetData.data = dataArr;
-                if(formTypeSetData.valueDefaultChecked){
-                    formTypeSetData.valueDefaultChecked = formTypeSetData.valueDefaultChecked.split(",");
+            formTypeSetData.checkedDefaultValue = formTypeSetData['valueDefaultChecked_' +　ctlname];
+            formTypeSetData.data = dataArr;
+            
+            if(formTypeSetData.hidden == '') {
+                formTypeSetData.hidden = "false";
+            }
+            if(formTypeSetData.checkedDefaultValue){
+                formTypeSetData.checkedDefaultValue = formTypeSetData.checkedDefaultValue.split(",");
 
-                }
+            }
+            var hidden = formTypeSetData.hidden;
+            //console.log(hidden)
+            //手动设置viewRelation字段值
             var viewRelation = [];
             if(formTypeSetData.hidden) {
                 viewRelation = null;
             }
             else {
-                var relationName = formTypeSetData.TextTempSelectCtlName
-                 viewRelation.push({'ctlname':formTypeSetData.TempSelectCtlName,'value':formTypeSetData.TempSelectData,'show':formTypeSetData.show,'type':formTypeSetData.TempSelect})
+                viewRelation =  relationArr;
             }
 
             var options = {
@@ -560,9 +796,9 @@
                 title:formTypeSetData.title,
                 prompt:NeedFindItem.options.prompt,
                 required:formTypeSetData.required=="" ? 'false':formTypeSetData.required,
-                valueDefault:formTypeSetData.valueDefaultChecked,
-                hidden:formTypeSetData.hidden =="" ? 'false':formTypeSetData.hidden,
-                viewRelation:viewRelation,
+                valueDefault:formTypeSetData.checkedDefaultValue,
+                hidden:hidden,
+                viewRelation:JSON.parse(formTypeSetData.relationshow),
             }
           //  console.log(NeedFindItem)
             var item = {
@@ -574,12 +810,15 @@
                 options:options,
                 value:formTypeSetData.value,
                 valueEx:formTypeSetData.valueEx,
+                showCondition:formTypeSetData.TempSelectCondition,
 
             };
-            console.log(item)
+
             var itemAnotherArr = [];
-            for(var i=0;i<GetlocalStorageItemArr.length;i++) {
-                var arr = GetlocalStorageItemArr[i];
+            var GetlocalItem =JSON.parse(localStorage.getItem("itemArr") || "[]");
+
+            for(var i=0;i<GetlocalItem.length;i++) {
+                var arr = GetlocalItem[i];
                 if(arr.ctlname == ctlname){
                     itemAnotherArr.push(item);
                 }
@@ -587,45 +826,41 @@
                       itemAnotherArr.push(arr);
                 }
             }
-           localStorage.removeItem("itemArr");
-           localStorage.setItem('itemArr',JSON.stringify(itemAnotherArr));
+            console.log(item)
+            localStorage.setItem('itemArr',JSON.stringify(itemAnotherArr));
+            var a =JSON.parse(localStorage.getItem("itemArr") || "[]");
+            //$.alert('保存成功')
+            window.location.reload();//刷新当前页面更新localstorage的内容否则，内容为旧的localstorage
 
         }
         //预览
         function toPreview() {
-            if($('#selectName').val()) {
-                console.log(123)
-                window.location.href ='view.html';
-            }
-            else {
-               $.alert('请先选择要预览的控件!')
-            }
-            
+            window.location.href ='view.html';
         }
 
 
         //增加选项设置
-        function addSelectItem(i,type) {
+        function addSelectItem(i,type,ctlname) {
             console.log(i)
-            var len = $('.select-options').parent().children().length -1;
+            var len = $('.select-options_'+ctlname).parent().children().length -1;
             var addLen = len++;
             var insertData = '';
             if(type=='checkbox'){
                 console.log('checkbox')
-                insertData = insertData + "<div id=\"selectOptions_"+ addLen +"\"  data-index=\""+ addLen +"\" class=\"select-options\" style=\"display:block;\">";
+                insertData = insertData + "<div id=\"selectOptions_"+ addLen +"\"  data-index=\""+ addLen +"\" class=\"select-options_"+ctlname+"\" style=\"display:block;\">";
                 insertData = insertData + "     <label class=\"aui-input-addon\" style=\"padding-top:0\">";
-                insertData = insertData + "           <input type=\"checkbox\" class=\"aui-input dl\" id=\"valueDefaultChecked\" name=\"valueDefaultChecked\" value=\"\"  style=\"width:auto;margin-right:5px;float:none;display: inline-block;\" />";
+                insertData = insertData + "           <input type=\"checkbox\" class=\"aui-input dl\" id=\""+ctlname+"_valueDefaultChecked_"+addLen+"\" name=\"valueDefaultChecked_"+ctlname+"\" data-options=\""+ctlname+"\" value=\"\"  style=\"width:auto;margin-right:5px;float:none;display: inline-block;\" />";
                 insertData = insertData + "           <input type=\"text\" class=\"aui-input aui-input-sm\" id=\"\" class=\"select1 dl\"  value=\"\" style=\"float:none;display: inline-block;width:70%\" />";
-                insertData = insertData + "           <input type=\"button\" id=\"addBtn\" namne=\"addBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline\" value=\"+\"  onclick=\"addSelectItem('"+addLen+"',\'checkbox\')\"/>";
+                insertData = insertData + "           <input type=\"button\" id=\"addBtn\" namne=\"addBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline\" value=\"+\"  onclick=\"addSelectItem('"+addLen+"',\'checkbox\','"+ctlname+"')\"/>";
                 insertData = insertData + "           <input type=\"button\" id=\"removeBtn\" namne=\"removeBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline;\" value=\"-\" onclick=\"removeSelectItem("+addLen+")\"/>";
             }
             else {
                 console.log('radio')
-                insertData = insertData + "<div id=\"selectOptions_"+ addLen +"\"  data-index=\""+ addLen +"\"  class=\"select-options\" style=\"display:block;\">";
+                insertData = insertData + "<div id=\"selectOptions_"+ addLen +"\"  data-index=\""+ addLen +"\"  class=\"select-options_"+ctlname+"\"  style=\"display:block;\">";
                 insertData = insertData + "     <label class=\"aui-input-addon\" style=\"padding-top:0\">";
-                insertData = insertData + "           <input type=\"radio\" class=\"aui-input dl\" id=\"valueDefaultChecked\" name=\"valueDefaultChecked\" value=\"\"  style=\"width:auto;margin-right:5px;float:none;display: inline-block;\" />";
+                insertData = insertData + "           <input type=\"radio\" class=\"aui-input dl\" id=\""+ctlname+"_valueDefaultChecked_"+addLen+"\"  name=\"valueDefaultChecked_"+ctlname+"\" value=\"\"  style=\"width:auto;margin-right:5px;float:none;display: inline-block;\" />";
                 insertData = insertData + "           <input type=\"text\" class=\"aui-input aui-input-sm\" id=\"\" class=\"select1 dl\"  value=\"\" style=\"float:none;display: inline-block;width:70%\" />";
-                insertData = insertData + "           <input type=\"button\" id=\"addBtn\" namne=\"addBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline\" value=\"+\"  onclick=\"addSelectItem('"+addLen+"',\'radio\')\"/>";
+                insertData = insertData + "           <input type=\"button\" id=\"addBtn\" namne=\"addBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline\" value=\"+\"  onclick=\"addSelectItem('"+addLen+"',\'radio\','"+ctlname+"')\"/>";
                 insertData = insertData + "           <input type=\"button\" id=\"removeBtn\" namne=\"removeBtn\" class=\"aui-btn aui-btn-block aui-btn-success p-0\" style=\"width:26px;display:inline;\" value=\"-\" onclick=\"removeSelectItem("+addLen+")\"/>";
             }
                                     
@@ -640,39 +875,82 @@
         }
 
         //编辑某项控件时，跟据存在本地的数据来判断是否是选中的
-        function setOptionChecked () {
-            for(var i =0;i<GetlocalStorageItemArr.length;i++) {
-                var item = GetlocalStorageItemArr[i];
-                var valueDefault = item.options.valueDefault;
-                var data = item.options.data || '';
-                var showRelation = item.options.showRelation || {};
-                for(var j =0;j<data.length;j++) {
-                    var dataitem = data[j];
-                    for(var k=0;k<valueDefault.length;k++) {
-                        var vditem = valueDefault[k];
-                        if(dataitem.text == vditem) {
-                           if(item.type =='radio'){
-                                $('input[data-radio='+dataitem.text+']').attr('checked','checked');
-                           }
-                           else {
-                                $('input[data-check='+dataitem.text+']').attr('checked','checked');
-                           }
-                        }
+        function setOptionChecked (ctlname) {
+            var FindItem = findItem(ctlname);
+            console.log(FindItem)
+                
+            var item = FindItem;
+            var valueDefault = item.options.valueDefault;
+            var data = item.options.data || '';
+            var showRelation = item.options.showRelation || {};
+           
+            for(var j =0;j<data.length;j++) {
+                var dataitem = data[j];
+                for(var k=0;k<valueDefault.length;k++) {
+                    var vditem = valueDefault[k];
+                    if(dataitem.text == vditem) {
+                        // console.log(dataitem.text)
+                       if(item.type =='radio'){
+                            $('input[data-radio='+ctlname+'_'+dataitem.text+']').attr('checked','checked');
+                       }
+                       else {
+                            $('input[data-check='+ctlname+'_'+dataitem.text+']').attr('checked','checked');
+                       }
                     }
                 }
             }
+            
         }
+
+
+        //添加条件
+         var addTrNumb = 1;
+        function addTrConditionBtn() {
+            var showType = '<select class="TempSelect" name="TempSelect"  value="" style="display:inline-block;"><option value="" disabled="" selected>请选择</option><option value="radio">单选框</option><option value="checkbox">复选框</option></select>';
+            var ctlnameSelect = '<select class="TempSelectCtlName" name="TempSelectCtlName"  value="" style="display:inline-block;"><option value="" disabled="" selected>请选择</option></select>';
+            var dataSelect = '<select class="TempSelectData" name="TempSelectData"  value="" style="display:inline-block;"><option value="" disabled="" selected>请选择</option></select>';
+            var isShowSelect = '<select class="show" name="show"  value="" style="display:inline-block;"><option value="" disabled="" selected>请选择</option><option value="true">显示</option><option value="false">隐藏</option></select>'
+            var btn = '<div class="aui-btn aui-btn-block aui-btn-success p-5 dl" onclick="removeTrBtn()" style="width:30px;">x</div>'
+           
+           
+            var nlen = addTrNumb++;
+            var insertTrData = '';
+            insertTrData = insertTrData + "<tr id=\"s_tr_"+ nlen +"\">";
+            insertTrData = insertTrData +       "<td>"+showType+"</td>";
+            insertTrData = insertTrData +       "<td>"+ctlnameSelect+"</td>";
+            insertTrData = insertTrData +       "<td>"+dataSelect+"</td>";
+            insertTrData = insertTrData +       "<td>"+isShowSelect+"</td>";
+            insertTrData = insertTrData +       "<td><div class=\"aui-btn aui-btn-block aui-btn-success p-5 dl\" onclick=\"removeTrBtn(this,"+nlen+")\" style=\"width:30px;\">x</div></td>";
+            insertTrData = insertTrData + "</tr>";
+
+            $('#showConditionTbody').append(insertTrData);
+
+           //获取当前控件 的类型
+            var getType = $('#formBox .aui-form').attr('data-type');
+            //console.log(getType)
+            setFormTypeSelectParam('s_tr_'+ nlen,'TempSelect','TempSelectCtlName',getType);
+        }
+
+        //删除某一行
+        function removeTrBtn(e,i){
+           // console.log($(e).parent().parent().remove())
+            $(e).parent().parent().remove()
+        }
+
         //设置选择select控件时的数据动联及各项参数
-        function setFormTypeSelectParam(id,cid,type){
+        function setFormTypeSelectParam(trId,id,cid,type){
             var itemLocalStorageArr = JSON.parse(localStorage.getItem('itemArr'));
             if(type == 'text'){
-                $('#TempSelect').change(function() {
+               // console.log(111)
+                $('#'+trId).find('.TempSelect').change(function() {
+               //     console.log(123)
                 //如果选择单选框，则遍历全局数据的type为radio的ctlname
                 var selectCurrentType = $(this).val();
                 var selectArr=[];
-                var $TempSelectCtlName = $('#'+ cid);
-                $('#TempSelectCtlName').find("option:not(:first)").remove();
-                //$('#TextTempSelectCtlName option:not(:first)').remove();
+                var $TempSelectCtlName = $('#'+trId).find('.TempSelectCtlName');
+               // console.log($TempSelectCtlName)
+                $('#'+trId).find('.TempSelectCtlName').find("option:not(:first)").remove();
+                //$('.TextTempSelectCtlName option:not(:first)').remove();
                 
                 for(var i =0;i<itemLocalStorageArr.length;i++) {
                     var item = itemLocalStorageArr[i];
@@ -687,12 +965,12 @@
                     var SelectedCtlNameValue = getCtlNameValue || ''; 
 
                     var selectChildArr=[]; 
-                    var $TempSelectData = $('#TempSelectData');
+                    var $TempSelectData = $('#'+trId).find('.TempSelectData');
                     if(!SelectedCtlNameValue){
-                        $('#TempSelectCtlName').change(function() {
+                        $('#'+trId).find('.TempSelectCtlName').change(function() {
                             var selectChildArr=[];
-                            $('#TempSelectData').find("option:not(:first)").remove();
-                            // $('#TextTempSelectData option:not(:first)').remove();
+                            $('#'+trId).find('.TempSelectData').find("option:not(:first)").remove();
+                            // $('.TextTempSelectData option:not(:first)').remove();
                             for(var j =0;j<itemLocalStorageArr.length;j++) {
                                 var item = itemLocalStorageArr[j];
                                 if(item.ctlname == $(this).val()) {
@@ -710,7 +988,7 @@
                         })
                     }
                     else {
-                        $('#TempSelectData').find("option:not(:first)").remove();
+                        $('#'+trId).find('.TempSelectData').find("option:not(:first)").remove();
                         //$('#TextTempSelectData option:not(:first)').remove();
                             for(var j =0;j<itemLocalStorageArr.length;j++) {
                                 var item = itemLocalStorageArr[j];
@@ -732,12 +1010,14 @@
                 })
             }
             else {
-                $('#TempSelect').change(function() {
+                $('#'+trId).find('.TempSelect').change(function() {
                     var selectCurrentType = $(this).val(); //获取当前选择的 显示类型[type、checkbox、radio]
+
                     var currentSelectCtrlName = $('#selectName').val(); //获取当前选择的CtrlName
                     var selectArr=[];//设置空的数组
-                    var $TempSelectCtlName = $('#'+cid);
-                    $('#TempSelectCtlName').find("option:not(:first)").remove();
+                    // var $TempSelectCtlName = $('#'+cid);
+                    var $TempSelectCtlName = $('#'+trId).find('.TempSelectCtlName');
+                    $('#'+trId).find('.TempSelectCtlName').find("option:not(:first)").remove();
                     //$('#CheckboxTempSelectCtlName option:not(:first)').remove();
 
                     for(var i =0;i<itemLocalStorageArr.length;i++) {
@@ -755,10 +1035,10 @@
                         var SelectedCtlNameValue = getCtlNameValue || ''; 
 
                         var selectChildArr=[]; 
-                        var $TempSelectData = $('#'+id+'Data');
+                        var $TempSelectData = $('#'+trId).find('.TempSelectData');
                         if(!SelectedCtlNameValue) {
-                            $('#TempSelectCtlName').change(function() {
-                                $('#TempSelectData').find("option:not(:first)").remove();
+                            $('#'+trId).find('.TempSelectCtlName').change(function() {
+                                $('#'+trId).find('.TempSelectData').find("option:not(:first)").remove();
                                 //$('#CheckboxTempSelectData option:not(:first)').remove();
                                 for(var j =0;j<itemLocalStorageArr.length;j++) {
                                     var item = itemLocalStorageArr[j];
@@ -777,7 +1057,7 @@
                             })
                         }
                         else{
-                            $('#TempSelectData').find("option:not(:first)").remove();
+                            $('#'+trId).find('.TempSelectData').find("option:not(:first)").remove();
                             for(var j =0;j<itemLocalStorageArr.length;j++) {
                                 var item = itemLocalStorageArr[j];
                                 if(item.ctlname == SelectedCtlNameValue) {
@@ -799,6 +1079,6 @@
             }
             
         }
-    </script>
+    </script> -->
 </body>
 </html>

@@ -39,6 +39,13 @@
             width: 98%;
             font-size:12px;
         }
+        label.error {
+            display: block;
+            float:right;
+            color:red;
+            font-size: 12px;
+            padding-left: 15px;
+        }
     </style>
 </head>
 <body>
@@ -48,53 +55,83 @@
                 <div id="formBox"></div> 
         </form>
         <script id="template_text" type="text/x-dot-template">
-            <div class="aui-form">
+
                 {{for (var i=0;i<it.length;i++) {}}
-                    <div class="aui-input-row">
+                    <div class="aui-input-row" style="width:100%;">
                         {{? it[i].type =='text'}}
                             {{? it[i].options.required =='true'}}
-                            <b class="aui-input-addon aui-text-danger" style="position: static;">*</b>
+                            <b class="aui-input-addon aui-text-danger" data-danger="{{=it[i].ctlname}}_danger">*</b>
+                            <label for="" class="aui-input-addon" style="width: 80px;font-size:14px;padding-left: 15px;">{{=it[i].options.title}}</label>
+                            <label for="">
+                                 <input type="{{=it[i].type}}" class="aui-input dl" id="{{=it[i].ctlname}}_{{=i}}" name="{{=it[i].ctlname}}" value="{{=it[i].value}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" placeholder="{{=it[i].options.prompt}}"  required />
+                            </label>
+                            {{??}}
+                            <label class="aui-input-addon" style="width: 80px;">{{=it[i].options.title}}</label>
+                            <label><input type="{{=it[i].type}}" class="aui-input dl" id="{{=it[i].ctlname}}_{{=i}}" name="{{=it[i].ctlname}}" value="{{=it[i].value}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" placeholder="{{=it[i].options.prompt}}" /></label>
                             {{?}}
-                            <span class="aui-input-addon">{{=it[i].options.title}}
-                                <input type="{{=it[i].type}}" class="aui-input dl" id="{{=it[i].ctlname}}_{{=i}}" name="{{=it[i].ctlname}}" value="{{=it[i].value}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" placeholder="{{=it[i].options.prompt}}" />
-                            </span>
                             
+                           
+                    
                             
                         {{?? it[i].type =='checkbox'}} 
                             {{? it[i].options.required =='true'}}
-                                <b class="aui-input-addon aui-text-danger" style="position: static;">*</b>
-                            {{?}}
-                            <span class="aui-input-addon">{{=it[i].options.title}}</span>
-                          
+                                <b class="aui-input-addon aui-text-danger" data-danger="{{=it[i].ctlname}}_danger">*</b>
+                                <label for="" class="aui-input-addon" style="width: 80px;font-size:14px;padding-left: 15px;">{{=it[i].options.title}}</label>
+                                {{for (var j=0,data=it[i]['options']['data'].length;j<data;j++) {}}
+
+                                    
+                                    <label class="aui-input-addon" style="padding-top:0;display: block;width:98%;">
+                                        <input type="checkbox" class="aui-input dl data-click" id="{{=it[i].ctlname}}_{{= j}}"  required value="{{=it[i]['options']['data'][j].text}}"  name="{{=it[i].ctlname}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}"  data-check="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
+                                      
+                                        {{? it[i]['options']['data'][j].text =="其他"}}
+                                            <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_other_text" class="select1 dl" name="{{=it[i].ctlname}}_other_text" placeholder="" value="" style="float:none;display: inline-block;width:70%;" disabled />
+                                        {{?}}
+                                        
+                                    </label>
+                                {{}}}
+                            {{??}}
+                            <label for="" class="aui-input-addon" style="width: 80px;font-size:14px;padding-left: 15px;">{{=it[i].options.title}}</label>
                             {{for (var j=0,data=it[i]['options']['data'].length;j<data;j++) {}}
 
                                 
                                 <label class="aui-input-addon" style="padding-top:0;display: block;width:98%;">
-                                    <input type="checkbox" class="aui-input dl" id="{{=it[i].ctlname}}_{{= j}}"  value="{{=it[i]['options']['data'][j].text}}"  name="{{=it[i].ctlname}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" data-check="{{=it[i]['options']['data'][j].text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
-                                    {{? it[i]['options']['data'][j].text =="其他_"}}
-                                    <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_other_text" class="select1 dl" name="{{=it[i].ctlname}}_other_text" placeholder="" value="{{=it[i].valueEx}}" style="float:none;display: inline-block;width:70%;" />
+                                    <input type="checkbox" class="aui-input dl data-click" id="{{=it[i].ctlname}}_{{= j}}"  value="{{=it[i]['options']['data'][j].text}}"  name="{{=it[i].ctlname}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}"  data-check="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
+                                  
+                                    {{? it[i]['options']['data'][j].text =="其他"}}
+                                        <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_other_text" class="select1 dl" name="{{=it[i].ctlname}}_other_text" placeholder="" value="" style="float:none;display: inline-block;width:70%;" disabled />
                                     {{?}}
+                                    
                                 </label>
-                                
-
                             {{}}}
+                            {{?}}
+                            
                             
                         {{??}}
                             {{? it[i].options.required =='true'}}
-                                <b class="aui-input-addon aui-text-danger" style="position: static;">*</b>
-                            {{?}}
-                            <span class="aui-input-addon">{{=it[i].options.title}}</span>
-                            {{for (var j=0,data=it[i]['options']['data'].length;j<data;j++) {}}
+                                <b class="aui-input-addon aui-text-danger" data-danger="{{=it[i].ctlname}}_danger">*</b>
+                                <label for="" class="aui-input-addon" style="width: 80px;font-size:14px;padding-left: 15px;">{{=it[i].options.title}}</label>
+                                 {{for (var j=0,data=it[i]['options']['data'].length;j<data;j++) {}}
+                                    <label class="aui-input-addon" style="padding-top:0 ;display: block;width:98%;">
+                                        <input type="radio" class="aui-input data-click" id="{{=it[i].ctlname}}_{{= j}}"  required name="{{=it[i].ctlname}}" data-radio="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" value=""  style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
+                                        {{? it[i]['options']['data'][j].text =="其他"}}
+                                            <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_other_text" class="select1 dl" name="{{=it[i].ctlname}}_other_text" placeholder="" value="" style="float:none;display: inline-block;width:70%;" disabled />
+                                        {{?}}
+                                    </label>
+                                {{}}}
+                            {{??}}
+                             <label for="" class="aui-input-addon" style="width: 80px;font-size:14px;padding-left: 15px;">{{=it[i].options.title}}</label>
+                             {{for (var j=0,data=it[i]['options']['data'].length;j<data;j++) {}}
                                 <label class="aui-input-addon" style="padding-top:0 ;display: block;width:98%;">
-                                    <input type="radio" class="aui-input" id="{{=it[i].ctlname}}_{{= j}}"  name="{{=it[i].ctlname}}" data-radio="{{=it[i]['options']['data'][j].text}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" value=""  style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
-                                     {{? it[i]['options']['data'][j].text =="其他_"}}
-                                        <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_othe_text" class="select1 dl" name="other_text" placeholder="" value="" style="float:none;display: inline-block;width:70%;" />
+                                    <input type="radio" class="aui-input data-click" id="{{=it[i].ctlname}}_{{= j}}"  name="{{=it[i].ctlname}}" data-radio="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" data-relation="{{=it[i].ctlname}}_{{=it[i]['options']['data'][j].text}}" value=""  style="width:auto;margin-right:5px;float:none;display: inline-block;" /> {{=it[i]['options']['data'][j].text}}
+                                    {{? it[i]['options']['data'][j].text =="其他"}}
+                                        <input type="text" class="aui-input aui-input-sm" id="{{=it[i].ctlname}}_other_text" class="select1 dl" name="{{=it[i].ctlname}}_other_text" placeholder="" value="" style="float:none;display: inline-block;width:70%;" disabled />
                                     {{?}}
                                 </label>
+                                {{?}}
                             {{}}}
                         {{?}}
                     </div>
-                {{}}}
+                    {{}}}
                 <div class="aui-btn-row">
                     <div class="aui-btn aui-btn-block aui-btn-success p-5" onclick="saveViewData()">保存</div>
                 </div> 
@@ -117,6 +154,8 @@
 
 
     <script src="Scripts/jquery.min.js" type="text/javascript"></script>
+    <script src="Scripts/jquery.validate.min.js"></script>
+    <script src="Scripts/messages_zh.min.js"></script>
     <script src="Scripts/prototypeEx.js"></script>
     <script src="Content/xAui/script/api.js"></script>
     <script src="Scripts/doT.min.js"></script>
@@ -124,102 +163,195 @@
     <script type="text/javascript">
         //首先获取本地存储的itemArr数组数据
         var GetlocalStorageItemArr =JSON.parse(localStorage.getItem("itemArr") || "[]");
-       //console.log(GetlocalStorageItemArr);
+    
 
-        //获取地址栏中cttlname 参数 
-        // var getHrefParam = getQueryString('ctlname');
-        // console.log(getHrefParam)
-        // for(var i =0;i<GetlocalStorageItemArr.length;i++) {
-        //     console.log(GetlocalStorageItemArr)
-        // }
-        window.onload = function() {
+        $(document).ready(function(){
             for(var i =0;i<GetlocalStorageItemArr.length;i++) {
                 var item = GetlocalStorageItemArr[i];
-                console.log(item)
+              //  console.log(item)
+                var m_ctlname = item.ctlname;
                 var valueDefault = item.options.valueDefault;
                 var data = item.options.data || '';
                 var showRelation = item.options.viewRelation || [];
-                //console.log(showRelation);
-
                 
                 //页面加载之后判断本地数据的hidden属性
                 if(item.options.hidden =='false') {
                     var ctrlname = item.ctlname;
                     $('input[name='+ ctrlname+']').parent().parent().hide();
                 }
-
-                //如果某个控件 存在showRelation的设置,则如下代码
-                if(showRelation.length > 0) {
-                    for(var b=0;b<showRelation.length;b++) {
-                        var sitem = showRelation[b];
-
-                        var NeedFindItem = findItem(sitem.ctlname);
-                            if(NeedFindItem.ctlname == sitem.ctlname) {
-                                var vDefalut = NeedFindItem.options.valueDefault;
-                                for(var m=0;m<vDefalut.length;m++){ //遍历默认值
-                                    var vditem = vDefalut[m];
-                                    if(vditem == sitem.value) { //如果某控件的默认值正好等于viewRelation的value,那么直接将关联的控件显示
-                                        $('input[name='+ item.ctlname+']').parent().parent().show();
-
-                                    }
-                                }
-                                var ctlname_ = item.ctlname
-                                var $clname = $('input[name='+ ctlname_+']');
-                                var concatInputAttr = NeedFindItem.ctlname+'_'+sitem.value;
-                                console.log(NeedFindItem.type)
-                                if(NeedFindItem.type =='radio') {
-                                    $('input[name='+sitem.ctlname+']').click(function(){
-                                        if(concatInputAttr == $(this).attr('data-relation') ){
-                                            $('input[name='+ ctlname_+']').parent().parent().show();
-                                        }
-                                        else {
-                                            $('input[name='+ ctlname_+']').parent().parent().hide();
-                                        }
-                                            
-                                    })
-                                }
-                                else {
-                                    $('input[name='+sitem.ctlname+']').each(function(){
-
-                                        $(this).change(function(){
-                                           // console.log(123)
-                                            var changeCheckboxStatus = $(this).prop("checked");
-                                           console.log(changeCheckboxStatus);
-                                            if(concatInputAttr == $(this).attr('data-relation') ){
-                                                
-                                                
-                                            }
-                                            else {
-                                                   
-                                            }
-                                        })
-                                    })
-                                }
-                                
-                                
-                            }
-                    }
-                }
                 
-                //循环遍历 根据默认值来设置是否选中
-                for(var j =0;j<data.length;j++) {
-                    var dataitem = data[j];
-                    for(var k=0;k<valueDefault.length;k++) {
-                        var vditem = valueDefault[k];
-                        if(dataitem.text == vditem) {
-                           if(item.type =='radio'){
-                                $('input[data-radio='+dataitem.text+']').attr('checked','checked');
-                           }
-                           else {
-                                $('input[data-check='+dataitem.text+']').attr('checked','checked');
-                           }
+                var showRelationLen  = showRelation.length;
+                //判断显示条件是否为默认值并且选中，如果选中则显示条件内容
+                
+
+
+                if(item.type != "text") {
+                   // console.log(m_ctlname);
+
+                    //循环遍历 根据默认值来设置是否选中
+                    for(var j =0;j<data.length;j++) {
+                        var dataitem = data[j]
+                        for(var k=0;k<valueDefault.length;k++) {
+                            var vditem = valueDefault[k];
+                            if(dataitem.text == vditem) {
+
+                                var datarelationconcat = m_ctlname+'_'+dataitem.text;
+                                // console.log(datarelationconcat)
+                                if(item.type =='radio'){
+                                    $('input[data-radio='+datarelationconcat+']').attr('checked','checked');
+                                }
+
+                                else if(item.type =='checkbox') {
+                                    //console.log(datarelationconcat)
+                                    $('input[data-check='+datarelationconcat+']').attr('checked','checked');
+                                   // console.log($('input[data-check='+datarelationconcat+']').is(':checked'))
+                                }
+                            }
                         }
                     }
+                }}
+        })
+        window.onload = function() {
+            var globalSuccessParams='';
+            var successArr = [];
+            
+            $('.data-click').click(function(){
+                var optionData = $(this).attr('data-relation'); //点击选中的值的属性 ctlname_value
+                var ck = $(this).attr('data-relation').split('_')[0]; //点击选中的值的当前ctlname
+                var ckvalue = $(this).attr('data-relation').split('_')[1]; //点击选中的值
+                var changeStatus = $(this).prop("checked"); //判断当前是否选中
+                console.log(changeStatus);
+                if(ckvalue == '其他') {
+                    console.log('9999')
+                    if(changeStatus) {
+                         $('#'+ ck + '_other_text').removeAttr('disabled');
+                    }
+                    else {
+                        $('#'+ ck + '_other_text').attr('disabled','disabled');
+                    }
                 }
+                else {
+                    $('#'+ ck + '_other_text').attr('disabled','disabled');
+                }
+                // $('#'+ ck + '_other_text').removeAttr('disabled');
 
+                for(var i =0;i<GetlocalStorageItemArr.length;i++) {
+                    var item = GetlocalStorageItemArr[i];
+                    var showRelation = item.options.viewRelation || [];
+                    if(item.ctlname != ck) {
+                        if(showRelation.length > 0 ){
+                            var flag = 0;
+                            var newarr= [];
+                            //console.log('')
+                            for(var j=0;j<showRelation.length;j++) {
+                                var sr = showRelation[j];
+                                var attrStatus = sr.ctlname + "_"+sr.value;
+                                var is = $('input[data-relation='+attrStatus+']').is(":checked");
+                                //console.log(attrStatus)
+                                if(sr.value == ckvalue) {
+                                    if(is) {
+                                         flag =1;
+                                    }
+                                    else {
+                                         flag =0;
+                                    }
+                                }
+                                else {
+                                     if(is) {
+                                         flag =1;
+                                    }
+                                    else {
+                                         flag =0;
+                                    }  
+                                }
+                                //console.log(attrStatus + is)
+                                //console.log(flag)
+                                if(flag){
+
+                                    if(item.showCondition == 'anyOne') {
+                                        $('input[name='+ item.ctlname+']').parent().parent().show();
+                                        break;
+                                    }
+                                    else {
+                                        newarr.push(attrStatus);
+                                        if(newarr.length == showRelation.length) {
+                                            $('input[name='+ item.ctlname+']').parent().parent().show();
+                                        }
+                                        else {
+                                            $('input[name='+ item.ctlname+']').parent().parent().hide();
+                                        }
+                                    }
+                                    
+                                }
+                                else {
+                                    
+                                    $('input[name='+ item.ctlname+']').parent().parent().hide();
+                                }
+                            }
+                        }
+                    }                  
+                }
+            })
+
+            
+            for(var i =0;i<GetlocalStorageItemArr.length;i++) {
+                var item = GetlocalStorageItemArr[i];
+              //  console.log(item)
+                var m_ctlname = item.ctlname;
+                var valueDefault = item.options.valueDefault;
+                var data = item.options.data || '';
+                var showRelation = item.options.viewRelation || [];
                 
+                //页面加载之后判断本地数据的hidden属性
+                if(item.options.hidden =='false') {
+                    var ctrlname = item.ctlname;
+                    $('input[name='+ ctrlname+']').parent().parent().hide();
+                }
+                
+                var showRelationLen  = showRelation.length;
+                if(showRelation.length>0) {
+                    var mark =0;var dvarr = [];
+
+                    for(var k=0;k<showRelation.length;k++){
+                        var kitem = showRelation[k];
+                        var srjoin = kitem.ctlname +'_'+ kitem.value
+
+                        var defalutValueIsChecked = $('input[data-relation='+srjoin+']').is(":checked")
+
+                        if(defalutValueIsChecked) {
+                             mark =1;
+                        }
+                        else {
+                             mark =0;
+                        }
+                        if(mark){
+                            if(item.showCondition == 'anyOne'){
+                                $('input[name='+ item.ctlname+']').parent().parent().show();
+                                break;
+                            }
+                            else {
+                                dvarr.push(srjoin);
+                                if(dvarr.length == showRelation.length) {
+                                    $('input[name='+ item.ctlname+']').parent().parent().show();
+                                }
+                                else {
+                                    $('input[name='+ item.ctlname+']').parent().parent().hide();
+                                }
+                            }
+
+                           
+                        }
+                        else {
+                            $('input[name='+ item.ctlname+']').parent().parent().hide();
+                        }
+                    }
+                    
+                }
             }
         }
+
+
+
         function findItem(CName) {
             for(var i=0;i<GetlocalStorageItemArr.length;i++) {
                 var itemOne = GetlocalStorageItemArr[i];
@@ -234,24 +366,23 @@
         
 
        function saveViewData() {
-            // var formVali = $('#AuiFormView').validate({
-            //     rules: {
+            var formVali = $('#AuiFormView').validate({
+                rules: {
                     
-            //     },
-            //     messages: {
+                },
+                messages: {
                     
-            //     }
-            // });
-            // isValidate = formVali.form();
-            var formData = DomUtil.serialize(document.getElementById('AuiFormView'));
-            console.log(formData)
+                }
+            });
+            isValidate = formVali.form();
+            if(isValidate) {
+                var formData = DomUtil.serialize(document.getElementById('AuiFormView'));
+                console.log(formData)
+                console.log(JSON.stringify(formData))
+            }
+            
        }
-        //接受URL地址参数 
-        // function getQueryString(name) {//name为传入参数
-        //     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");     
-        //     var r = window.location.search.substr(1).match(reg);
-        //     if (r != null) return unescape(r[2]); return null;                      
-        // }
+    
     </script>
 </body>
 </html>
